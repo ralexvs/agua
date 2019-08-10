@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Reporte lectura</title>
+    <style type="text/css">
+        @page{
+            size: letter;
+            margin: 1cm;
+        }
+        .table{
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 5px;
+            background-color: white;
+        }
+        .table td .numero{
+            text-align: center;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h4>Sistema de H2o</h4>
+            </div>
+            <div class="list-group">
+                <table class="">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h3> Lectura No.:</h3>
+                            </td>
+                            <td>{{encabezado.id}}</td>
+                            <td><h3> Período de emisión: </h3></td>
+                            <td>{{encabezado.periodo|date:'b/Y'}}</td>
+                        </tr>
+                        <tr>
+                            <td>observaciones: </td>
+                            <td colspan="3">{{encabezado.descripcion}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Lectura</th>
+                        <th>Catastro</th>
+                        <th>Lec. Ant.</th>
+                        <th>Lect. Act.</th>
+                        <th>Consumo M3</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in detalle %}
+                    <tr>
+                        <td>{{item.lectura}}</td>
+                        <td>{{item.catastro}}</td>
+                        <td>{{item.lectura_anterior}}</td>
+                        <td>{{item.lectura_actual}}</td>
+                        <td class="numero">{{item.consumo}}</td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+                <tfoot>
+                    <tr></tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><h4> Consumo Total:</h4></td>
+                        <td class="numero">{{encabezado.consumo_total}}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock title %}
+
+{% block topbar %}{% endblock topbar %}
+
+{% block sidebar %}{% endblock sidebar %}
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+
+{% block breadcrumb_item %}{% endblock breadcrumb_item %}
+
+{% block linea %}{% endblock linea %}
+
+{% block title_pages %}{% endblock title_pages %}
+
+{% block content %}
+
+{% endblock content %}
+
+
+{% block footer %}
+
+{% endblock footer %}
+
+
+{% block login %}
+<div class="container">
+  <div class="card card-login mx-auto mt-5">
+    <div class="card-header">Login</div>
+    <div class="card-body">
+      <!-- <small class="text-danger">
+        {% if form.errors %}
+        {% for field in form %}
+        {% if field.errors %}
+        {% for error in field.errors %}
+        {{error|escape}}
+        {% endfor%}
+        {% endif %}
+        {% endfor%}
+      
+        {% if form.non_field_errors%}
+        {% for error in form.non_field_errors%}
+        {{error|escape}}
+        {%endfor%}
+        {%endif%}
+        {%endif%}
+      </small>
+ -->
+      <form class="user" method="POST"> {% csrf_token %}
+        <div class="form-group">
+          <div class="form-label-group">
+            <input type="text" id="id_username" name="username" class="form-control" placeholder="Usuario"
+              required="required" autofocus="autofocus">
+            <label for="inputEmail">Usuario</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label-group">
+            <input type="password" id="id_password" name="password" class="form-control" placeholder="Contraseña"
+              required="required">
+            <label for="inputPassword">Contraseña</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" value="remember-me">
+              Recordar contraseña
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit" href="{% url 'home' %}">Acceder</button>
+      </form>
+      <div class="text-center">
+        <a class="d-block small mt-3" href="register.html">Registrar una cuenta</a>
+        <a class="d-block small" href="forgot-password.html">Recuperar contraseña?</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock login %}
+
+{% block js_pages %}
+<script>
+  {% if form.errors %}
+    {% for field in form %}
+      {% if field.errors %}
+        {% for error in field.errors %}
+          mensaje('{{error|escape}}', 'red');
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+
+    {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+        mensaje('{{error|escape}}', 'red');
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+</script>
+
+{% endblock js_pages %}

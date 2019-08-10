@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Multas
+{% endblock title %}
+
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
+    <a href="{% url 'parametro:multa_create' %}"  " role="button" > Nuevo</a>
+</li>
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if object_list %}Lista{% else %}No existen datos {% endif%}</li>
+{% endblock breadcrumb_item %}
+
+{% block linea %}
+    
+{% endblock linea %}
+    
+    
+{% block content %}
+
+
+<!-- DataTables Example -->
+<div class="card mb-3">
+        <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="table" style="width=100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Descripción</th>
+                        <th>Valor</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {%for item in object_list %}
+                    <tr>
+                        <td>{{item.id}}</td>
+                        <td>{{item.descripcion}}</td>
+                        <td>{{item.valor}}</td>
+                        <td>{{item.estado|yesno:'Activo,Inactivo'}}</td>
+                        <td>
+                            <a href="{% url 'parametro:multa_update' item.id %}" class="btn btn-primary btn-circle btn-sm" role="button"><abbr title="Editar"><i class="far fa-edit fa-xs"></i></abbr></a>
+                            <a onclick="return abrir_modal('{% url 'parametro:multa_inactivar' item.id %}')" href="#"
+                                class="btn btn-secondary btn-circle btn-sm" role="button"><abbr title="Inactivar"><i class="far fa-thumbs-down fa-xs"></i></abbr></a>
+                            <a href="#" onclick="return abrir_modal('{% url 'parametro:multa_delete' item.id %}')" class="btn btn-danger btn-circle btn-sm" role="button"><abbr title="Eliminar"><i class="far fa-trash-alt fa-xs"></i></abbr></a>
+                        </td>
+                    </tr>
+                {% endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer small text-muted">Actualizado a las 11:59 PM</div>
+</div>
+
+
+{% endblock content %}
+    

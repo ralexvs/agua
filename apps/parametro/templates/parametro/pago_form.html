@@ -1,0 +1,56 @@
+<div class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="col-xl-12 col-md-12">
+            {% if object %}
+            <form method="POST" role="form" class="form-inline" action="{% url 'parametro:pago_update' object.pk %}">
+                {% csrf_token %}
+                <div class="card-body no-gutters bg-info rounded text-light shadow">
+                    {% else %}
+                    <form method="POST" role="form" class="form-inline" action="{% url 'parametro:pago_create' %}">
+                        {% csrf_token %}
+                        <div class="card-body no-gutters bg-success rounded text-light shadow">
+                            {% endif %}
+                            <div class="row no-gutters align-items-center">
+                                <div class="col p-2">
+                                    <div class=" text-xs font-weight-bold text-uppercase">
+                                        {% if object %}Editar
+                                        <div class="card-body-icon">
+                                            <i class="far fa-edit fa-xs"></i>
+                                        </div>
+                                        {% else %}
+                                        Nuevo
+                                        <div class="card-body-icon">
+                                            <i class="far fa fa-file-alt"></i>
+                                        </div>
+                                        
+                                        {% endif %} pago
+
+                                        
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="row p-2">
+                                        {{form.as_p}}
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <button type="submit" class="btn btn-block text-white"><span
+                                                    class="fa fa-save"></span>
+                                                Guardar </button>
+                                        </div>
+                                        <div class="col">
+                                            <button onclick="return cerrar_modal()" type="button"
+                                                class="btn btn-block text-white"><span class="fa fa-undo">
+                                                    Cancelar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

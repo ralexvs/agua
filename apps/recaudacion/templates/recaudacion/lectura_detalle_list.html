@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    lecturas
+{% endblock title %}
+
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
+    <a href="#"> Nuevo</a>
+</li>
+<li class="breadcrumb-item"><i class="fas fa-file-pdf text-danger"></i>
+    <a href="{% url 'recaudacion:reporte_deudores' %}" target="reportes"> Deudores</a>
+</li>
+
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i> 
+    {% if object_list %}Lista{% else %}No existen datos {% endif%}</li>
+{% endblock breadcrumb_item %}
+
+{% block linea %}
+    
+{% endblock linea %}
+    
+    
+{% block content %}
+
+
+<!-- DataTables Example -->
+<div class="card mb-3">
+        <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+            
+                <thead class="table-info">
+                    <tr>
+                        <th class="text-muted">Lectura</th>
+                        <th class="text-muted">Catastro</th>
+                        <th class="text-muted">L. Ant.</th>
+                        <th class="text-muted">L. Act.</th>
+                        <th   class="text-muted">M3</th>
+                        <th class="text-muted ">Total</th>
+                        <th class="text-muted">Lectura</th>
+                        <th class="text-muted">Recaudción</th>
+                        <th class="text-muted">Cobrar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for det in object_list %}
+                    <tr>
+                        <td>{{det.lectura}}</td>
+                        <td>{{det.catastro}}</td>
+                        <td>{{det.lectura_anterior}}</td>
+                        <td>{{det.lectura_actual}}</td>
+                        <td>{{det.consumo}}</td>
+                        <td class="table-success">{{det.total}}</td>
+                        <td>{{det.tipo_lectura}}</td>
+                        <td>{{det.estado|yesno:'Adeuda,Pagado'}}
+                        </td>
+                        <td>
+                            <a href="{% url 'recaudacion:recaudacion_create' det.catastro.id %}"> <button
+                                class="btn " role="button"><abbr title="Recaudar"><i
+                                        class="text-success fas fa-cash-register"></i></abbr></button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer small text-muted">Actualizado: {{ahora}} </div>
+</div>
+
+
+{% endblock content %}
+
+

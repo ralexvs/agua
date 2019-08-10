@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Lecturas
+{% endblock title %}
+
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-list "></i>
+    <a href="{% url 'recaudacion:lectura_detalle_list' %}" role=" button"> Lista</a>
+</li>
+<li class="breadcrumb-item"><i class="far fa fa-undo text-danger"></i>
+    <a href="{{request.META.HTTP_REFERER}}" role=" button"> Cancelar</a>
+</li>
+
+{% if encabezado %}
+<li class="breadcrumb-item active"><i class="far fa fa-edit"></i>Editar</li>
+{% else %}
+<li class="breadcrumb-item active"><i class="far fa fa-file-alt"></i> Nuevo</li>
+{%endif%}
+{% endblock breadcrumb_item %}
+
+{% block linea %}
+
+{% endblock linea %}
+
+{% block content %}
+<form method="POST" id="frmLectura" role="form" class="form-inline">{% csrf_token %}
+    <div class="col-xl-12 col-md-12 mb-12">
+        <div class="card shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-muted text-uppercase mb-1">
+                            {% if encabezado %}Editar{% else %}Nueva{% endif %} Recaudación
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="row">
+                            <!-- Inicio cabecera izquierda-->
+                            <div class="col-8">
+                                <div class="input-group mb-1">
+                                    <div class="input-group-prepend">
+                                        <!--Inicio encabezado-->
+                                        <label class="input-group-text" for="id_fecha">Fecha:</label>
+                                        <input class="form-control" type="text" id="id_fecha" name="fecha" readonly>
+                                        <label class="input-group-text ml-2" for="id_descuento">Descuento:</label>
+                                        <input type="number" id="id_descuento" name="descuento" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="input-group mb-1">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="id_pago">Pago:</label>
+                                        <input type="text" id="id_pago" name="pago" class="form-control">
+
+                                        <!--Opciones-->
+                                        <!--Botones-->
+                                        <button type="submit" class="btn btn-success ml-1 mr-1"><i
+                                                class="fas fa-money-bill-wave-alt "></i>
+                                            Recaudar</button>
+
+                                        <a href="{% url 'recaudacion:recaudacion_list' %}"
+                                            class="btn btn-secondary ml-1 mr-1 "><i class="far fa-hand-point-left"></i>
+                                            Cancelar</a>
+                                        <!--Fin botones-->
+                                    </div>
+                                </div>
+
+                                <div class="input-group pb-2">
+                                    <label class="input-group-text" for="id_descripcion ">Descripcion:</label>
+                                    <input class="form-control-plaintext border" type="text" id="id_descripcion"
+                                        name="descripcion">
+                                </div>
+                                <div class="col-12">
+                                    <!-- DataTables Example -->
+                                    <div class="card mb-1">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-hover" style="width=100%"
+                                                    cellspacing="0">
+                                                    <thead class="bg-info">
+                                                        <tr>
+                                                            <th class="text-light ">Lectura</th>
+                                                            <th class="text-light text-center">Abonado</th>
+                                                            <th class="text-light">Ant.</th>
+                                                            <th class="text-light">Act.</th>
+                                                            <th class="text-light">M3</th>
+                                                            <th class="text-light ">Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {%for det in lectura_detalle %}
+                                                        <tr>
+                                                            <td>{{det.lectura}}</td>
+                                                            <td>{{det.catastro}}</td>
+                                                            <td>{{det.lectura_anterior}}</td>
+                                                            <td>{{det.lectura_actual}}</td>
+                                                            <td>{{det.consumo}}</td>
+                                                            <td class="table-success">{{det.total}}</td>
+
+                                                        </tr>
+                                                        {% endfor%}
+                                                    </tbody>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer small text-muted">Actualizado: {{ahora}}</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--End cabecera izquierda-->
+                            <!--Inicio totales-->
+                            <div class="col-4">
+                                <div class="row">
+                                <!-- Inicio totales -->
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <label class=" input-group-text text-muted">T.
+                                                M3</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">T.
+                                                Base</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">Bas.
+                                                reserva</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">Excedente</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">Subtotal</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">Total
+                                                descuento</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">Cons.
+                                                maximo</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">TOTAL
+                                                GENERAL</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Fin totales -->
+
+                            </div>
+                            <!--fin totales-->
+                        </div>
+                        </div>
+                        <!--Fin fila cabecera-->
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</form>
+{% endblock content %}
+
+{% block fecha %}
+
+<script>
+    $(document).ready(function () {
+        $("#id_fecha").datetimepicker({
+            format: 'Y-m-d',
+            timepicker: false
+        });
+    });
+</script>
+{% endblock fecha %}
+
+{% block varios %}
+
+{% endblock varios %}
+
+{% block js_pages %}
+
+<script>
+    $(document).ready(function () {
+
+        $("#sidebarToggle").click();
+
+        $('#table').DataTable({
+            "pagingType": "full_numbers",
+            language: {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "<i class= 'fas fa-angle-double-left'></i>",
+                    "sLast": "<i class= 'fas fa-angle-double-right'></i>",
+                    "sNext": "<i class= 'fas fa-angle-right'></i>",
+                    "sPrevious": "<i class= 'fas fa-angle-left'></i>",
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+    });
+
+    function selectCatastro(numero, medidor, apellidos, nombres, catastro, lectura_anterior) {
+
+        $('#id_numero').val(+numero);
+        $('#id_medidor').val(+medidor);
+        $('#id_apellidos').val(apellidos);
+        $('#id_nombres').val(nombres);
+        $('#id_catastro').val(+catastro);
+        $('#id_lectura_anterior').val(lectura_anterior);
+        $('#id_lectura_actual').focus();
+        $('#id_lectura_actual').select();
+        $('#table').DataTable().search('').draw();
+    }
+
+    function calcular_detalle() {
+
+        let consumo, lan, lac;
+        lan = $('#id_lectura_anterior').val();
+        lac = $('#id_lectura_actual').val();
+        lac = lac === "" ? 0 : +lac;
+        lac = lac < 0 ? 0 : +lac;
+
+        lan = lan === "" ? 0 : +lan;
+        lan = lan < 0 ? 0 : +lan;
+
+        if (lac >= lan) {
+            consumo = lac - lan
+            $('#id_consumo').val(consumo);
+        } else {
+            $('#id_consumo').val(0);
+        }
+    }
+
+    function clear_detail() {
+        $('#id_consumo').val(0);
+        $('#id_lectura_anterior').val(0);
+        $('#id_lectura_actual').val(0);
+    }
+
+
+
+</script>
+
+{% endblock js_pages %}

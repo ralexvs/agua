@@ -1,0 +1,84 @@
+<ul class="sidebar navbar-nav bg-dark ">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span class="text-light">Dashboard</span>
+        </a>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdownParametro" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-cogs"></i>
+            <span class="text-light">Parametrización</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdownParametro">
+            <a class="dropdown-item" href="{% url 'parametro:entidad_list' %}">Entidad</a>
+            <a class="dropdown-item" href="{% url 'parametro:servicio_list' %}">Tipo de servicios</a>
+            <a class="dropdown-item" href="{% url 'parametro:tarifa_list' %}">Tarifas</a>
+            <a class="dropdown-item" href="{% url 'parametro:multa_list' %}">Multas y otros</a>
+            <a class="dropdown-item" href="{% url 'parametro:descuento_list' %}">Descuentos</a>
+            <a class="dropdown-item" href="{% url 'parametro:pago_list' %}">Formas de pago</a>
+
+        </div>
+    </li>
+
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdownCatalogo" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-fw fa-folder"></i>
+            <span class="text-light">Catastro</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdownCatalogo">
+            <h6 class="dropdown-header">Catálogos</h6>
+            <a class="dropdown-item" href="{% url 'catastro:medidor_list' %}">Medidores</a>
+            <a class="dropdown-item" href="{% url 'catastro:barrio_list' %}">Sectores / Barrios</a>
+            <a class="dropdown-item" href="{% url 'catastro:abonado_list' %}">Abonados</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'catastro:catastro_list' %}">Catastro</a>
+            <div class="dropdown-divider"></div>
+            
+            <h6 class="dropdown-header">Planillas:</h6>
+            <a class="dropdown-item" href="{% url 'catastro:tipolectura_list' %}">Tipo de lectura</a>
+            <a class="dropdown-item" href="{% url 'catastro:lectura_list' %}">Tomas de lectura</a>
+            <a class="dropdown-item " href="blank.html">Generación de planillas</a>
+            
+        </div>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdownRecaudacion" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-money-check-alt"></i>
+            <span class="text-light">Recaudación</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdownRecaudacion">
+            <a class="dropdown-item" href="#">Apertura de caja</a>
+            <a class="dropdown-item" href="{% url 'recaudacion:lectura_detalle_list' %}">Cobro de planillas</a>
+            <a class="dropdown-item" href="forgot-password.html">Cierre de caja</a>
+        </div>
+    </li>
+    
+    <h6 class="dropdown-header"><b>Informes</b></h6>
+    <div class="dropdown-divider"></div>
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-phone-slash"></i>
+            <span class="text-light">Abonados suspendidos</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-fw fa-table"></i>
+            <span class="text-light">Catálogo general</span></a>
+    </li>
+    <li class="nav-item">
+        
+        <a class="nav-link" href="#">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <span class="text-light">Valores recaudados</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'recaudacion:lectura_detalle_list' %}">
+            <i class="fas fa-fw fa-table"></i>
+            <span class="text-light">Deudores</span></a>
+    </li>
+    
+</ul>

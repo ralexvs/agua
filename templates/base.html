@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">|
+
+  <title>H20 - {% block title %}Home{% endblock title %}</title>
+
+  <!-- Custom fonts for this template-->
+
+  <link href="{% static "vendor/fontawesome-free/css/all.min.css" %}" rel="stylesheet" type="text/css">
+
+  <!-- Page level plugin CSS-->
+  <link href="{% static "vendor/datatables/dataTables.bootstrap4.css " %}" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="{% static "css/sb-admin.css " %}" rel="stylesheet">
+
+    <!-- Custom styles for this dataTable-->
+    <link href="{% static "vendor/dataTables/jquery.dataTables.min.css " %}" rel="stylesheet">
+
+    <!-- Custom styles for this jquery-confirm-->
+    <link href="{% static "vendor/jquery-confirm/jquery-confirm.min.css" %}" rel="stylesheet">
+
+    <!-- Custom bootstrap-table-->
+
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">
+
+<!--Custom datatimepicker-->
+<link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
+  integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+
+</head>
+
+<body id="page-top">
+
+  
+  {% block topbar %}
+    {% include 'includes/topbar.html' %}
+  {% endblock topbar %}
+
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    
+    {% block sidebar %}
+      {% include 'includes/sidebar.html' %}
+    {% endblock sidebar %}
+      
+
+    <div id="content-wrapper">
+
+      <div class="container-fluid">
+
+        <!-- Breadcrumbs-->
+        {% block breadcrumb %}
+          
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><i class="far fa fa-home"></i>
+            <a href="{% url 'home' %}">Home</a>
+          </li>
+          
+        {% endblock breadcrumb %}
+
+        {% block breadcrumb_item %}
+          <li class="breadcrumb-item active">Blank Page</li>
+        {% endblock breadcrumb_item %}
+        </ol>
+        <!-- Page Content -->
+        <h1>
+        {% block title_pages %}
+        {% endblock title_pages %}
+        </h1>
+        {% block linea %}
+        <hr>
+        {% endblock linea %}
+        
+        {% block content %}
+          
+        {% endblock content %}
+          
+
+      </div>
+      <!-- /.container-fluid -->
+
+      <!-- Sticky Footer -->
+      
+      {% block footer %}
+        {% include 'includes/footer.html' %}
+      {% endblock footer %}
+
+    </div>
+    <!-- /.content-wrapper -->
+
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">¿Listo para salir? <span class="text-primary"> {{user.username}}</span></h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Seleccione "Salir" a continuación si está listo para finalizar su sesión actual.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+          <a class="btn btn-primary" href="{% url 'logout' %}">Salir</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% block login %}
+  
+{% endblock login %}
+
+<div class="modal fade" id="popup"></div>
+  
+  <!-- Bootstrap core JavaScript-->
+  <script src="{% static "vendor/jquery/jquery.min.js " %}"></script>
+  <script src="{% static "vendor/bootstrap/js/bootstrap.bundle.min.js " %}"></script>
+  
+
+  <!-- Core plugin JavaScript-->
+  <script src="{% static "vendor/jquery-easing/jquery.easing.min.js " %}"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="{% static "js/sb-admin.min.js " %}"></script>
+  
+
+  <!-- Custom scripts for all dataTables-->
+  <script src="{% static "vendor/datatables/jquery.dataTables.min.js " %}"></script>
+
+  <!-- Custom styles for this jquery-confirm-->
+  <script src="{% static "vendor/jquery-confirm/jquery-confirm.min.js " %}"></script>
+  
+<!-- Custom scripts datatimepicker-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"
+  integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+
+<!-- Custom bootstrap-table-->
+<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table-locale-all.min.js"></script>
+
+
+<script>
+  $(document).ready(function () {
+    jQuery.datetimepicker.setLocale('es');
+    
+  });
+</script>
+
+
+{% block fecha %}
+  
+{% endblock fecha %}
+
+
+ 
+
+{% block control_modal %}
+  <script>
+
+    function abrir_modal(url) {
+      $("#popup").load(url, function () {
+        $(this).modal({
+          backdrop: 'static',
+          keyboard: false
+        })
+        $(this).modal('show');
+      });
+    }
+    function cerrar_modal() {
+      $("#popup").modal('hide');
+      return false
+    };
+
+    function mensaje(msg, color = 'green') {
+        if (color == 'success') {
+          color = 'green';
+        }
+        if (color == 'error') {
+          color = 'red';
+        }
+
+
+        $.alert({
+          title: '',
+          theme: 'material',
+          type: color,
+          content: msg
+        });
+      }
+
+      {% if messages %}
+        {% for message in messages %}
+          mensaje('{{message}}', '{{message.tags}}');
+        {% endfor %}
+      {% endif %}
+
+
+  </script>
+    
+{% endblock control_modal %}
+    
+
+  {% block js_pages %}
+  <script>
+    $(document).ready(function () {
+
+      $("#sidebarToggle").click();
+      
+      $('.table').DataTable({
+        "pagingType": "full_numbers",
+        language: {
+          "sProcessing": "Procesando...",
+          "sLengthMenu": "Mostrar _MENU_ registros",
+          "sZeroRecords": "No se encontraron resultados",
+          "sEmptyTable": "Ningún dato disponible en esta tabla",
+          "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+          "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+          "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+          "sInfoPostFix": "",
+          "sSearch": "Buscar:",
+          "sUrl": "",
+          "sInfoThousands": ",",
+          "sLoadingRecords": "Cargando...",
+          "oPaginate": {
+            "sFirst": "<i class= 'fas fa-angle-double-left'></i>",
+            "sLast": "<i class= 'fas fa-angle-double-right'></i>",
+            "sNext": "<i class= 'fas fa-angle-right'></i>",
+            "sPrevious": "<i class= 'fas fa-angle-left'></i>",
+          },
+          "oAria": {
+            "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+          }
+        }
+      });
+    });
+
+  </script>
+  {% endblock js_pages %}
+  
+  {% block varios %}
+    
+  {% endblock varios %}
+    
+
+</body>
+
+</html>

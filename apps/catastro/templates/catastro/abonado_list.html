@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    abonados
+{% endblock title %}
+
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
+    <a href="#"  " role="button" onclick="return abrir_modal('{% url 'catastro:abonado_create' %}')"> Nuevo</a>
+</li>
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if object_list %}Lista{% else %}No existen datos {% endif%}</li>
+{% endblock breadcrumb_item %}
+
+{% block linea %}
+    
+{% endblock linea %}
+    
+    
+{% block content %}
+
+
+<!-- DataTables Example -->
+<div class="card mb-3">
+        <div class="card-body">
+        <div class="table-responsive">
+            <table 
+            id="table"
+            data-locale="es-ES"
+            data-toggle="table" 
+            data-pagination="true"
+            data-search="true"
+            data-show-columns="true"
+            data-show-toggle="true"
+            data-show-fullscreen="true"
+            data-sortable="true"
+
+            >
+                <thead class="table-info">
+                    <tr>
+                        <th class="text-muted" data-field="identificacion" data-sortable="true">Identificación</th>
+                        <th class="text-muted" data-field="apellidos" data-sortable="true">Apellidos</th>
+                        <th class="text-muted" data-field="nombres" data-sortable="true">Nombres</th>
+                        <th class="text-muted">Celular</th>
+                        <th class="text-muted">Sexo</th>
+                        <th class="text-muted">Estado</th>
+                        <th class="text-muted">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {%for item in object_list %}
+                    <tr>
+                        <td>{{item.identificacion}}</td>
+                        <td>{{item.apellidos}}</td>
+                        <td>{{item.nombres}}</td>
+                        <td>{{item.celular}}</td>
+                        <td>{{item.sexo}}</td>
+                        <td >{#item.estado|yesno:'Activo,Inactivo'#}
+                            <div onclick="inactivar('{{item.id}}')" >
+                            {% if item.estado%}
+                                <abbr title="Activar"><i class="far fa-thumbs-up text-primary"></i></abbr>
+                            {%else%}
+                                <abbr title="Inactivar"><i class="far fa-thumbs-down text-danger"></i></abbr>
+                            {%endif%}
+                            </div>
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-primary btn-circle btn-sm" role="button" onclick="return abrir_modal('{% url 'catastro:abonado_update' item.id %}')" ><abbr title="Editar"><i class="far fa-edit fa-xs"></i></abbr></a>
+                            <a onclick="return abrir_modal('{% url 'catastro:abonado_inactivar' item.id %}')" href="#"
+                                class="btn btn-secondary btn-circle btn-sm" role="button"><abbr title="Inactivar"><i class="far fa-thumbs-down fa-xs"></i></abbr></a>
+                            <a href="#" onclick="return abrir_modal('{% url 'catastro:abonado_delete' item.id %}')" class="btn btn-danger btn-circle btn-sm" role="button"><abbr title="Eliminar"><i class="far fa-trash-alt fa-xs"></i></abbr></a>
+                        </td>
+                    </tr>
+                {% endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer small text-muted">Actualizado a las 11:59 PM</div>
+</div>
+
+
+{% endblock content %}
+
+
+{% block varios %}
+    <script>
+        function inactivar(id){
+            let data = {id:id};
+            data = JSON.stringify(data);
+            var token = '{{csrf_token}}';
+            
+            $.ajax({
+                headers:{"X-CSRFToken":token},
+                type:'POST',
+                url:"/catastro/abonados/estado/"+id,
+                data:data,
+                success: function(response){
+                    if(response==='OK'){
+                        location.reload(true);
+                    }
+                    else{
+                        mensaje("Error, intentando cambiar estado")
+                    }
+                },
+                error: function(jqXHR, textStatus,errorThrow){
+                    console.log(textStatus, errorThrow);
+                    mensaje(errorThrow,'red');
+                    cerrar_modal();
+                }
+            });
+        }
+    </script>
+{% endblock varios %}
+
+
+{% block js_pages %}
+<script>
+    $(document).ready(function () {
+    
+    $("#sidebarToggle").click();
+    });
+</script>
+
+{% endblock js_pages %}
+    

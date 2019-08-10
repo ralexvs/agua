@@ -1,0 +1,29 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form method="POST" class="form-inline" role="form" action="{% url 'parametro:servicio_delete' object.pk %}">
+            {% csrf_token %}
+            <div class="col">
+                <div class="card shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col">
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">¿Eliminar <span
+                                        class="text-info">
+                                        {{object.descripcion}}</span> ...?</div>
+                                <button type="submit" class="btn btn-success"><i class="far fa-question-circle"></i> Sí,
+                                    eliminar</button>
+                                <button class="btn btn-secondary" type="button" onclick="return cerrar_modal()"><span
+                                        class="fa fa-undo"></span>
+                                    Cancelar
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <i class="far fa-question-circle fa-2x text-secondary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

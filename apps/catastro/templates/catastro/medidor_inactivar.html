@@ -1,0 +1,39 @@
+<div class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="col-xl-12 col-md-12">
+            <form method="POST" class="form-inline" role="form" action="{% url 'catastro:medidor_inactivar' object.id %}">
+                {% csrf_token %}
+                <div class="card-body  bg-secondary rounded text-light shadow">
+                    <div class="row align-items-center">
+                        <div class="col p-2">
+                            <div class=" text-xs font-weight-bold text-uppercase">
+                                ¿Desea inactivar <span class="text-info"> </span> ...?
+                                <div class="card-body-icon">
+                                    <i class="far fa-thumbs-down fa-xs"></i>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+                                <div class="mx-auto">No.: {{object.numero}} {{object.descripcion}}</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+                                <div class="col">
+                                    <button type="submit" class="btn btn-block text-white"><span
+                                            class="far fa-thumbs-down fa-xs"></span>
+                                        Si, inactivar </button>
+                                </div>
+                                <div class="col">
+                                    <button onclick="return cerrar_modal()" type="button"
+                                        class="btn btn-block text-white"><span class="fa fa-undo">
+                                            Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

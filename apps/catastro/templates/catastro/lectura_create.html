@@ -1,0 +1,359 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Lecturas
+{% endblock title %}
+
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-list "></i>
+    <a href="{% url 'catastro:lectura_list' %}" role=" button"> Lista</a>
+</li>
+<li class="breadcrumb-item"><i class="far fa fa-undo text-danger"></i>
+    <a href="{{request.META.HTTP_REFERER}}" role=" button"> Cancelar</a>
+</li>
+
+{% if encabezado %}
+<li class="breadcrumb-item active"><i class="far fa fa-edit"></i>Editar</li>
+{% else %}
+<li class="breadcrumb-item active"><i class="far fa fa-file-alt"></i> Nuevo</li>
+{%endif%}
+{% endblock breadcrumb_item %}
+
+{% block linea %}
+
+{% endblock linea %}
+
+
+{% block content %}
+<form method="POST" id="frmLectura" role="form" class="form-inline">{% csrf_token %}
+    <div class="col-xl-12 col-md-12 mb-12">
+        <div class="card shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-muted text-uppercase mb-1">
+                            {% if encabezado %}Editar{% else %}Nueva{% endif %} Lectura
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="row">
+                            <div class="col-2 p-1">
+                                <!--Inicio encabezado-->
+                                <div class="form-group">
+                                    <label class="form-check-label" for="id_periodo">Periodo de lectura:</label>
+                                    {{form_enc.periodo}}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_descripcion">Descripción:</label>
+                                    {{form_enc.descripcion}}
+                                </div>
+                                <div class="input-group-sm">
+                                    <label class="col-form-label-sm text-muted">T. M3</label>{{form_enc.consumo_total}}
+                                    <label class="col-form-label-sm text-muted">T. Base</label>{{form_enc.total_base}}</li>
+                                    <label class="col-form-label-sm text-muted">Bas. reserva</label>{{form_enc.total_base_reserva}}</li>
+                                    <label class="col-form-label-sm text-muted">Excedente</label>{{form_enc.total_excedente}}</li>
+                                    <label class="col-form-label-sm text-muted">Consu. maximo</label>{{form_enc.total_consumo_maximo}}</li>
+                                    <label class="col-form-label-sm text-muted">TOTAL GENERAL</label>{{form_enc.total_general}}</li>
+                                </div>
+                            </div>
+                            <!--Inicio encabezado-->
+                            <div class="col-10">
+                                <!--Inicio lista catastro-->
+                                <!-- DataTables Example -->
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover" style="width=100%"
+                                                cellspacing="0">
+                                                <thead class="bg-info">
+                                                    <tr>
+                                                        <th class="text-light">Id</th>
+                                                        <th class="text-light">Catastro</th>
+                                                        <th class="text-light">Medidor</th>
+                                                        <th class="text-light">Apellidos</th>
+                                                        <th class="text-light">Nombres</th>
+                                                        <th class="text-light">Acción</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {%for item in catastro %}
+                                                    <tr>
+                                                        <td>{{item.id}}</td>
+                                                        <td>{{item.numero}}</td>
+                                                        <td>{{item.medidor.numero}}</td>
+                                                        <td>{{item.abonado.apellidos}}</td>
+                                                        <td>{{item.abonado.nombres}}</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-warning btn-circle"><i
+                                                                    class="far fa-hand-pointer"
+                                                                    onclick="selectCatastro({{item.numero}},'{{item.medidor}}','{{item.abonado.apellidos}}', '{{item.abonado.nombres}}',{{item.id}}, {{item.medidor.lectura_inicial}}) "></i></button>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor%}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-sm-2">
+                                                <input type="text" readonly name="numero" id="id_numero"
+                                                    class="form-control-plaintext text-success" value="" required>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <input type="text" readonly name="medidor" id="id_medidor"
+                                                    class="form-control-plaintext text-success" value="" required>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <input type="text" readonly name="apellidos" id="id_apellidos"
+                                                    class="form-control-plaintext text-success" value="" required>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="text" readonly name="nombres" id="id_nombres"
+                                                    class="form-control-plaintext text-success " value="" required>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <input type="text" readonly name="catastro" id="id_catastro"
+                                                    class="form-control-plaintext text-success" value="" required>
+                                            </div>
+                                            <div
+                                                class=" col-sm-2 p-0 text-xs font-weight-bold text-warning text-uppercase">
+                                                <span class="alert-warning">Catastro</span> </div>
+
+                                        </div>
+                                        <div class="
+                                        row ">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Lect.
+                                                        anterior</span>
+                                                </div>
+                                                <input type="number" name="lectura_anterior" style="width: 12%"
+                                                    id="id_lectura_anterior" value="" readonly required>
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Lect.
+                                                        actual</span>
+                                                </div>
+                                                <input type="number" name="lectura_actual" id="id_lectura_actual"
+                                                    value="0" required>
+                                                <div class="input-group-prepend">
+                                                    <span for="id_consumo" class='input-group-text'>M3</span>
+                                                </div>
+                                                <input class='form-control-plaintext col-sm-2 bg-warning text-primary'
+                                                    type="text" name="consumo" id="id_consumo" value="0" readonly>
+
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Lectura</span>
+                                                </div>
+                                                <select id="id_tipo_lectura" name="tipo_lectura"
+                                                    class="form-control col-6" style="width: 10%">
+                                                    {% for tl in tipo_lectura %}
+                                                    <option value="{{tl.id}}">{{tl.descripcion}}
+                                                    </option>
+                                                    {% endfor %}
+                                                </select>
+
+                                                <div class="col-sm-1">
+                                                    <button type="button" onclick="clear_detail()"
+                                                        class="btn btn-sm col-sm-2"><i
+                                                            class="fa fa-minus-circle text-dange"
+                                                            aria-hidden="true"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--Opciones-->
+                                        <div class="dropdown-divider"></div>
+                                        <div class="row">
+
+
+                                            <!--Botones-->
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <button type="submit" class="btn btn-success btn-block"><span
+                                                                class="fa fa-save"></span>Guardar</button>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <a href="{% url 'catastro:lectura_list' %}"
+                                                            class="btn btn-secondary btn-block"><i
+                                                                class="far fa-hand-point-left"></i>Cancelar</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--Fin botones-->
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Fin lista catastro-->
+                        </div>
+                        <!--Fin fila lectura y catastro-->
+                        <div class="row">
+                            <!--inicio detalle lectura-->
+                            <div class="col">
+                                <!-- DataTables Example -->
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover" style="width=100%"
+                                                cellspacing="0">
+                                                <thead class="table-info">
+                                                    <tr>
+                                                        <th class="text-muted">Lectura</th>
+                                                        <th class="text-muted">Catastro</th>
+                                                        <th class="text-muted">L. Ant.</th>
+                                                        <th class="text-muted">L. Act.</th>
+                                                        <th class="text-muted">M3</th>
+                                                        <th class="text-muted">Lectura</th>
+                                                        <th class="text-muted">Recaudción</th>
+                                                        <th class="text-muted">Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {%for det in detalle %}
+                                                    <tr>
+                                                        <td>{{det.lectura}}</td>
+                                                        <td>{{det.catastro}}</td>
+                                                        <td>{{det.lectura_anterior}}</td>
+                                                        <td>{{det.lectura_actual}}</td>
+                                                        <td>{{det.consumo}}</td>
+                                                        <td>{{det.tipo_lectura}}</td>
+                                                        <td>{{det.estado|yesno:'Adeuda,Pagado'}}
+                                                        </td>
+                                                        <td>
+
+                                                            <button
+                                                                onclick="return abrir_modal('{% url 'catastro:lecturadetalle_delete' encabezado.pk det.id %}')"
+                                                                class="btn btn-danger btn-circle" role="button"><abbr
+                                                                    title="Quitar"><i
+                                                                        class="fas fa-trash-alt fa-xs"></i></abbr></button>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor%}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <!--fin detalle lectura-->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock content %}
+
+{% block fecha %}
+
+<script>
+    $(document).ready(function () {
+        $("#id_periodo").datetimepicker({
+            format: 'Y-m-d',
+            timepicker: false
+        });
+    });
+</script>
+{% endblock fecha %}
+
+{% block js_pages %}
+<script>
+    $(document).ready(function () {
+
+        $("#sidebarToggle").click();
+
+        $('.table').DataTable({
+            "pageLength": 3,
+            "pagingType": "full_numbers",
+            language: {
+
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "<i class= 'fas fa-angle-double-left'></i>",
+                    "sLast": "<i class= 'fas fa-angle-double-right'></i>",
+                    "sNext": "<i class= 'fas fa-angle-right'></i>",
+                    "sPrevious": "<i class= 'fas fa-angle-left'></i>",
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+        $('#id_lectura_actual, #id_lectura_anterior').change(function () {
+            calcular_detalle();
+        });
+
+        /* Validar envío de Detalle*/
+        $('#frmLectura').submit(function (e) {
+            if (parseInt($('#id_lectura_actual').val()) == 0 || parseInt($('#id_lectura_anterior').val()) > parseInt($('#id_lectura_actual').val())) {
+                e.preventDefault();
+                $.alert({
+                    type: 'red',
+                    title: '',
+                    content: 'Lectura ACTUAL no puede ser menor que la ANTERIOR',
+                });
+            }
+        });
+    });
+
+    function selectCatastro(numero, medidor, apellidos, nombres, catastro, lectura_anterior) {
+
+        $('#id_numero').val(+numero);
+        $('#id_medidor').val(+medidor);
+        $('#id_apellidos').val(apellidos);
+        $('#id_nombres').val(nombres);
+        $('#id_catastro').val(+catastro);
+        $('#id_lectura_anterior').val(lectura_anterior);
+        $('#id_lectura_actual').focus();
+        $('#id_lectura_actual').select();
+        $('#table').DataTable().search('').draw();
+    }
+
+    function calcular_detalle() {
+
+        let consumo, lan, lac;
+        lan = $('#id_lectura_anterior').val();
+        lac = $('#id_lectura_actual').val();
+        lac = lac === "" ? 0 : +lac;
+        lac = lac < 0 ? 0 : +lac;
+
+        lan = lan === "" ? 0 : +lan;
+        lan = lan < 0 ? 0 : +lan;
+
+        if (lac >= lan) {
+            consumo = lac - lan
+            $('#id_consumo').val(consumo);
+        } else {
+            $('#id_consumo').val(0);
+        }
+    }
+
+    function clear_detail() {
+        $('#id_consumo').val(0);
+        $('#id_lectura_anterior').val(0);
+        $('#id_lectura_actual').val(0);
+    }
+
+
+</script>
+{% endblock js_pages %}
+
+{% block varios %}
+
+{% endblock varios %}

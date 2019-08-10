@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+<!-- <div class="modal-dialog modal-lg">
+    <div class="modal-content"> -->
+
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-list "></i>
+    <a href="{% url 'parametro:tarifa_list' %}" role=" button"> Lista</a>
+</li>
+<li class="breadcrumb-item"><i class="far fa fa-undo text-danger"></i>
+    <a href="{{request.META.HTTP_REFERER}}" role=" button"> Cancelar</a>
+</li>
+
+{% if object %}
+<li class="breadcrumb-item active"><i class="far fa fa-edit"></i>Editar</li>
+{% else %}
+<li class="breadcrumb-item active"><i class="far fa fa-file-alt"></i> Nuevo</li>
+{%endif%}
+{% endblock breadcrumb_item %}
+
+{% block linea %}
+
+{% endblock linea %}
+
+
+{% block content %}
+
+{% if object %}
+    <form method="POST" role="form" class="form-inline" action="{% url 'parametro:tarifa_update' object.pk %}">
+    {% csrf_token %}
+    {% else %}
+    <form method="POST" role="form" class="form-inline" action="{% url 'parametro:tarifa_create' %}">{% csrf_token %}
+        {% endif %}
+        <div class="col-xl-12 col-md-12 mb-12">
+            <div class="card shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-muted text-uppercase mb-1">
+                                {% if object %}Editar{% else %}Nueva{% endif %} tarifa
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+
+                                {{form.as_p}}
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+                                <button type="submit" class="btn btn-success mr-1 btn-block"><span
+                                        class="fa fa-save"></span> Guardar </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock content %}
+    <!-- </div>
+</div> -->

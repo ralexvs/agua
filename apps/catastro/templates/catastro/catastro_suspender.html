@@ -1,0 +1,39 @@
+<div class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="col-xl-12 col-md-12">
+            <form method="POST" class="form-inline" role="form" action="{% url 'catastro:catastro_suspender_servicio' object.id %}">
+                {% csrf_token %}
+                <div class="card-body  bg-warning rounded text-light shadow">
+                    <div class="row align-items-center">
+                        <div class="col p-2">
+                            <div class=" text-xs font-weight-bold text-uppercase">
+                                ¿Desea suspender el servicio <span class="text-info"> </span> ...?
+                                <div class="card-body-icon">
+                                    <i class="far fa-thumbs-down fa-xs"></i>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+                                <div class="mx-auto text-secondary"> Catastro: {{object.numero}} {{object.abonado.apellidos}} {{object.abonado.nombres}}</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+                                <div class="col">
+                                    <button type="submit" class="btn btn-block text-white"><span
+                                            class="far fa-thumbs-down fa-xs"></span>
+                                        Si, suspender </button>
+                                </div>
+                                <div class="col">
+                                    <button onclick="return cerrar_modal()" type="button"
+                                        class="btn btn-block text-white"><span class="fa fa-undo">
+                                            Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

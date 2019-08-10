@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Buscar abonado
+{% endblock title %}
+
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
+    <a href="#" role="button" onclick="return abrir_modal('{% url 'catastro:abonado_create' %}')"> Nuevo</a>
+</li>
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if object_list %}Lista{% else %}No existen datos {% endif%}</li>
+{% endblock breadcrumb_item %}
+
+{% block linea %}
+    
+{% endblock linea %}
+    
+    
+{% block content %}
+
+<div class="card mb-3">
+        <div class="card-body">
+        <div class="table-responsive">
+            <h1>Buscar</h1>
+            <form action="." method="get">
+                <label for="q">Buscar: </label>
+                <input type="text" name="q" id="" value="{{query|escape}}">
+                <input type="submit" value="Buscar">
+            </form>
+            
+            {% if query %}
+                <h2>Resultado por: {{query|escape}}</h2>
+                
+                
+                {% if results %}
+                    <ul>
+                        
+                        {% for abonado in results %}
+                            <li>{{abonado|escape}}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No se encontro al abonado</p>
+                {% endif %}
+                    
+                
+            {% endif %}
+                
+        </div>
+    </div>
+    <div class="card-footer small text-muted">Actualizado a las {{today}}</div>
+</div>
+
+
+{% endblock content %}
+
+
+{% block varios %}
+ 
+{% endblock varios %}
+
+
+{% block js_pages %}
+{% endblock js_pages %}
+    
