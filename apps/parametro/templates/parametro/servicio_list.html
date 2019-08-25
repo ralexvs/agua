@@ -8,7 +8,8 @@
 <li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
     <a href="{% url 'parametro:servicio_create' %}"  " role="button" > Nuevo</a>
 </li>
-<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if object_list %}Lista{% else %}No existen datos {% endif%}</li>
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if object_list %}<span class="text-success"> Tipos de servicios</span>{% else %} <span class="text-danger">No
+    tipos de servicios </span>{% endif%}</li>
 {% endblock breadcrumb_item %}
 
 {% block linea %}

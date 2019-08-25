@@ -8,7 +8,8 @@
 <li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
     <a href="#"  " role="button" onclick="return abrir_modal('{% url 'parametro:pago_create' %}')" > Nuevo</a>
 </li>
-<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if object_list %}Lista{% else %}No existen datos {% endif%}</li>
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if object_list %}<span class="text-success"> Formas de pago</span>{% else %} <span class="text-danger">No
+    existen formas de pagos </span>{% endif%}</li>
 {% endblock breadcrumb_item %}
 
 {% block linea %}

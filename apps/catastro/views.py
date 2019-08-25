@@ -219,6 +219,21 @@ class CatastroList(SinPrivilegios, ListView):
     model = Catastro
 
 
+class CatastroSuspendido(SinPrivilegios, ListView):
+
+    permission_required = 'catastro.view_catastro'
+    model = Catastro
+    template_name = "catastro/catastro_suspendido.html"
+    queryset = Catastro.objects.filter(suspender=True)
+
+    def get_context_data(self, **kwargs):
+        context = super(CatastroSuspendido, self).get_context_data(**kwargs)
+        #context.update({'ahora':self.ahora}) #tambien funciona
+        context['today'] = timezone.now()
+        return context
+
+
+
 class CatastroCreate(VistaBaseCreate):
 
     permission_required = 'catastro.add_catastro'

@@ -13,7 +13,8 @@
 </li>
 
 <li class="breadcrumb-item active"><i class="far fa fa-list"></i> 
-    {% if object_list %}Lista{% else %}No existen datos {% endif%}</li>
+    {% if object_list %}<span class="text-success"> Lecturas</span>{% else %} <span
+        class="text-danger">No existen lecturas </span>{% endif%}</li>
 {% endblock breadcrumb_item %}
 
 {% block linea %}

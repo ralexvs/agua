@@ -1,7 +1,11 @@
 from django.db import models
 from apps.core.models import ClaseModelo
 from apps.catastro.models import LecturaDetalle, Catastro, Abonado
-from apps.parametro.models import Servicio, Tarifa
+from apps.parametro.models import Servicio, Tarifa, Pago,Descuento
+
+#Para los signals
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 
 
@@ -12,8 +16,8 @@ class Recaudacion(ClaseModelo):
     fecha = models.DateField("Período consumo")
     abonado = models.ForeignKey("catastro.Abonado", verbose_name="Abonado", on_delete=models.CASCADE)
     descripcion = models.CharField("Descripción", max_length=150)
-    pago = models.IntegerField("Pago")
-    descuento = models.IntegerField("Descuento")
+    pago = models.ForeignKey("parametro.Pago", verbose_name="Pago", on_delete=models.CASCADE)
+    descuento = models.ForeignKey("parametro.Descuento", verbose_name="Descuento", on_delete=models.CASCADE)
     total_consumo = models.PositiveIntegerField("Consumo M3", null=True, blank=True)
     total_base = models.DecimalField("Tarifa base", max_digits=10, decimal_places=2, null=True, blank=True)
     total_base_reserva = models.DecimalField("Tarifa base reserva", max_digits=10, decimal_places=2, null=True, blank=True)
@@ -28,6 +32,14 @@ class Recaudacion(ClaseModelo):
 
     def __str__(self):
         return self.descripcion
+
+    def save(self):
+  
+        self.subtotal = float(self.total_base) + float(self.total_base_reserva) + float(self.total_excedente) + float(self.total_consumo_maximo)
+        self.total_general = float(self.subtotal)-float(self.total_descuento)
+
+        # Invoco al metodo save() del padre
+        super(Recaudacion, self).save()
 
 class RecaudacionDetalle(ClaseModelo):
     
@@ -52,4 +64,22 @@ class RecaudacionDetalle(ClaseModelo):
     def __str__(self):
         return int(self.recaudacion)
 
+    def save(self):
+    
+        self.total = float(self.base) + float(self.base_reserva) + \
+            float(self.valor_excedente) + float(self.valor_consumo_maximo)
 
+        # Invoco al metodo save() del padre
+        super(RecaudacionDetalle, self).save()
+
+
+#Signal Recaudacion ======================================================
+@receiver(post_save, sender=RecaudacionDetalle)
+def recaudaciondetalle_post_save_receiver(sender, instance, **kwargs):
+
+    id_lecturadetalle = instance.lectura.id
+
+    detLec = LecturaDetalle.objects.filter(pk=id_lecturadetalle).first()
+    if detLec:
+        detLec.estado = False
+        detLec.save()

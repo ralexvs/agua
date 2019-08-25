@@ -5,15 +5,16 @@
 {% endblock title %}
 
 {% block breadcrumb_item %}
-<li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
-    <a href="{% url 'recaudacion:recaudacion_create_r' %}"> Nuevo</a>
-</li>
 <li class="breadcrumb-item"><i class="fas fa-file-pdf text-danger"></i>
-    <a href="{% url 'catastro:lectura_print_all' %}" target="reportes"> Listado</a>
+    <a href="{% url 'recaudacion:planilla_print_all' %}" target="reportes"> PDF</a>
+</li>
+<li class="breadcrumb-item"><i class="fas fa-file-excel text-success"></i>
+    <a href="{% url 'recaudacion:planilla_cobrada_csv' %}" target="reportes"> Excel</a>
 </li>
 
 <li class="breadcrumb-item active"><i class="far fa fa-list"></i> 
-    {% if object_list %}Lista{% else %}No existen datos {% endif%}</li>
+    {% if object_list %}<span class="text-success"> Valores recaudados</span>{% else %} <span
+        class="text-danger">No existen valores recaudados </span>{% endif%}</li>
 {% endblock breadcrumb_item %}
 
 {% block linea %}
@@ -34,37 +35,30 @@
                         <th>Id</th>
                         <th>Fecha</th>
                         <th>Abonado</th>
+                        <th>Ley especial</th>
                         <th>Pago</th>
-                        <th>Descripción</th>
                         <th>Subtotal</th>
                         <th>Descuento</th>
                         <th>Total</th>
-                        <th>Acciones</th>
+                        <th>Planilla</th>
                     </tr>
                 </thead>
                 <tbody>
                 {%for item in object_list %}
                     <tr>
                         <td>{{item.id}}</td>
-                        <td>{{item.fc|date:'d/b/Y'}}</td>
+                        <td>{{item.fecha|date:'d/b/Y'}}</td>
                         <td>{{item.abonado}}</td>
-                        <td>{{item.pago}}</td>
-                        <td>{{item.descripcion}}</td>
-                        <td>{{item.subtotal}}</td>
                         <td>{{item.descuento}}</td>
-                        <td>{{item.total}}</td>
-                        <td>{{item.estado|yesno:'Activo,Inactivo'}}</td>
+                        <td>{{item.pago}}</td>
+                        <td>{{item.subtotal}}</td>
+                        <td>{{item.total_descuento}}</td>
+                        <td>{{item.total_general}}</td>
                         <td>
-                            <a class="btn btn-primary btn-circle btn-sm" role="button" href="{% url 'catastro:lectura_update' item.id %}" >
-                                <abbr title="Editar"><i class="far fa-edit fa-xs"></i></abbr></a>
-                            <a onclick="return abrir_modal('{% url 'catastro:lectura_inactivar' item.id %}')" 
-                            href="#" class="btn btn-secondary btn-circle btn-sm" role="button">
-                            <abbr title="Inactivar"><i class="far fa-thumbs-down fa-xs"></i></abbr></a>
-                            <a href="{% url 'catastro:lectura_print_one' item.id %}" target="reportes"
-                                class="btn btn-warning btn-circle btn-sm" role="button"><abbr title="PDF"><i
+                            
+                            <a href="{% url 'recaudacion:planilla_print_one' item.id %}" target="reportes"
+                                class="btn btn-outline-secondary" role="button"><abbr title="Planilla pagada"><i
                                         class="fas fa-file-pdf text-danger"></i></abbr></a>
-                            <a href="#" onclick="return abrir_modal('{% url 'catastro:lectura_delete' item.id %}')" 
-                            class="btn btn-danger btn-circle btn-sm" role="button"><abbr title="Eliminar"><i class="far fa-trash-alt fa-xs"></i></abbr></a>
                         </td>
                     </tr>
                 {% endfor%}

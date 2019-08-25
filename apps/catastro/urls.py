@@ -3,7 +3,7 @@ from .views import (
     MedidorList, MedidorCreate, MedidorUpdate, MedidorDelete, medidor_inactivar,
     BarrioList, BarrioCreate, BarrioUpdate, BarrioDelete, barrio_inactivar,
     AbonadoList, AbonadoCreate, AbonadoUpdate, AbonadoDelete, abonado_inactivar, abonado_inactivar_js, search,
-    CatastroList, CatastroCreate, CatastroUpdate, CatastroDelete, catastro_inactivar, catastro_suspender_servicio,
+    CatastroList, CatastroCreate, CatastroUpdate, CatastroDelete, catastro_inactivar, catastro_suspender_servicio, CatastroSuspendido,
     TipoLecturaList, TipoLecturaCreate, TipoLecturaUpdate, TipoLecturaDelete, tipolectura_inactivar,
     LecturaList,  LecturaDelete, lectura_inactivar, lectura, 
     LecturaDetalleDelete, 
@@ -45,6 +45,9 @@ urlpatterns = [
      path('catastros/inactivar/<int:id>', catastro_inactivar, name='catastro_inactivar'),
      path('catastros/suspender/<int:id>',
           catastro_suspender_servicio, name='catastro_suspender_servicio'),
+
+    path('catastros/suspendidos/', CatastroSuspendido.as_view(),name='catastro_suspendido'),
+
 
      path('tipolecturas/', TipoLecturaList.as_view(), name='tipolectura_list'),
      path('tipolecturas/create', TipoLecturaCreate.as_view(), name='tipolectura_create'),

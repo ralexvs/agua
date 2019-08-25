@@ -1,7 +1,7 @@
 from django import forms 
 from .models import Recaudacion, RecaudacionDetalle
 from apps.catastro.models import Abonado
-from apps.parametro.models import Pago
+from apps.parametro.models import Pago, Descuento
 from django.forms.models import modelformset_factory, inlineformset_factory
 
 class RecaudacionForm(forms.ModelForm):
@@ -15,11 +15,11 @@ class RecaudacionForm(forms.ModelForm):
         queryset=Pago.objects.filter(estado=True)
         .order_by('descripcion')
     )
-    
+       
     class Meta:
         model = Recaudacion
         fields = ('fecha','abonado', 'pago', 'descripcion',
-                  'pago', 'descuento')
+                  'pago', 'descuento', 'total_consumo',)
     
     def __init__(self, *args, **kwargs):
         super(RecaudacionForm, self).__init__(*args, **kwargs)

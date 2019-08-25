@@ -60,9 +60,9 @@
     <h6 class="dropdown-header"><b>Informes</b></h6>
     <div class="dropdown-divider"></div>
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{% url 'catastro:catastro_suspendido' %}">
             <i class="fas fa-phone-slash"></i>
-            <span class="text-light">Abonados suspendidos</span></a>
+            <span class="text-light">Servicio suspendidos</span></a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="#">
@@ -71,7 +71,7 @@
     </li>
     <li class="nav-item">
         
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{% url 'recaudacion:recaudacion_list' %}">
             <i class="fas fa-file-invoice-dollar"></i>
             <span class="text-light">Valores recaudados</span></a>
     </li>

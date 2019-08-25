@@ -8,14 +8,22 @@ Lecturas
 <li class="breadcrumb-item"><i class="far fa fa-list "></i>
     <a href="{% url 'recaudacion:lectura_detalle_list' %}" role=" button"> Lista</a>
 </li>
+<li class="breadcrumb-item"><i class="far fa fa-save "></i>
+    <a href="#" role=" button"> Guardar</a>
+</li>
 <li class="breadcrumb-item"><i class="far fa fa-undo text-danger"></i>
     <a href="{{request.META.HTTP_REFERER}}" role=" button"> Cancelar</a>
 </li>
+<li class="breadcrumb-item"><i class="fas fa-print"></i><a href="#" role=" button"> Imprimir</a>
+
+</li>
 
 {% if encabezado %}
-<li class="breadcrumb-item active"><i class="far fa fa-edit"></i>Editar</li>
+
+<li class="breadcrumb-item active"><i class="far fa fa-edit"></i><span class="text-warning"> Editar</span></li>
+
 {% else %}
-<li class="breadcrumb-item active"><i class="far fa fa-file-alt"></i> Nuevo</li>
+<li class="breadcrumb-item active"><i class="far fa fa-file-alt"></i> <span class="text-success"> Nuevo cobro</span></li>
 {%endif%}
 {% endblock breadcrumb_item %}
 
@@ -41,16 +49,15 @@ Lecturas
                                     <div class="input-group-prepend">
                                         <!--Inicio encabezado-->
                                         <label class="input-group-text" for="id_fecha">Fecha:</label>
-                                        <input class="form-control" type="text" id="id_fecha" name="fecha" readonly>
+                                        <input class="form-control" type="text" id="id_fecha" name="fecha" value="{{ahora}}" readonly>
                                         <label class="input-group-text ml-2" for="id_descuento">Descuento:</label>
-                                        <input type="number" id="id_descuento" name="descuento" class="form-control">
+                                        <input type="text" id="id_descuento" name="descuento" class="form-control" value="{{catastro.descuento}}" readonly>
                                     </div>
                                 </div>
                                 <div class="input-group mb-1">
                                     <div class="input-group-prepend">
                                         <label class="input-group-text" for="id_pago">Pago:</label>
-                                        <input type="text" id="id_pago" name="pago" class="form-control">
-
+                                        <input type="text" id="id_pago" name="pago" class="form-control" value="{{catastro.pago.descripcion}}" readonly>
                                         <!--Opciones-->
                                         <!--Botones-->
                                         <button type="submit" class="btn btn-success ml-1 mr-1"><i
@@ -139,6 +146,12 @@ Lecturas
                                     </div>
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">Cons.
+                                                maximo</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
                                             <label class="input-group-text text-muted">Subtotal</label>
                                         </div>
                                     </div>
@@ -148,12 +161,7 @@ Lecturas
                                                 descuento</label>
                                         </div>
                                     </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">Cons.
-                                                maximo</label>
-                                        </div>
-                                    </div>
+                                    
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
                                             <label class="input-group-text text-muted">TOTAL
@@ -166,42 +174,50 @@ Lecturas
                                 <div class="col-4">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                            <input type="text" id="id_total_consumo" name="total_consumo" class="form-control text-right"
+                                            value="{{total_consumo}}"readonly>
                                         </div>
                                     </div>
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
-                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                            <input type="text" id="id_total_base" name="total_base" class="form-control text-right" 
+                                            value="{{total_base}}" readonly>
                                         </div>
                                     </div>
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
-                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                            <input type="text" id="id_total_base_reserva" name="total_base_reserva" class="form-control text-right"
+                                            value="{{total_base_reserva}}" readonly>
                                         </div>
                                     </div>
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
-                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                            <input type="text" id="id_total_excedente" name="total_excedente" class="form-control text-right"
+                                            value="{{total_excedente}}" readonly>
                                         </div>
                                     </div>
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
-                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                            <input type="text" id="id_total_consumo_maximo" name="total_consumo_maximo" class="form-control text-right"
+                                            value="{{total_consumo_maximo}}" readonly>
                                         </div>
                                     </div>
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
-                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                            <input type="text" id="id_total_subtotal" name="total_subtotal" class="form-control text-right text-success "
+                                            value="{{subtotal}}" readonly>
                                         </div>
                                     </div>
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
-                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                            <input type="text" id="id_total_descuento" name="total_descuento" class="form-control text-right"
+                                            value="{{total_descuento}}" readonly>
                                         </div>
                                     </div>
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
-                                            <input type="number" id="id_total_consumo" name="total_consumo" class="form-control">
+                                            <input type="text" id="id_total_general" name="total_general" class="form-control text-right bg-dark text-success"
+                                            value="{{total_general}}" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -227,7 +243,7 @@ Lecturas
 
 <script>
     $(document).ready(function () {
-        $("#id_fecha").datetimepicker({
+        $("#").datetimepicker({
             format: 'Y-m-d',
             timepicker: false
         });
