@@ -58,6 +58,8 @@ Lecturas
                                     <div class="input-group-prepend">
                                         <label class="input-group-text" for="id_pago">Pago:</label>
                                         <input type="text" id="id_pago" name="pago" class="form-control" value="{{catastro.pago.descripcion}}" readonly>
+                                        <input type="text" id="id_total_consumo" name="total_consumo" class="form-control text-right ml-2"
+                                                value="{{total_consumo}} m3"readonly style="width: 15%">
                                         <!--Opciones-->
                                         <!--Botones-->
                                         <button type="submit" class="btn btn-success ml-1 mr-1"><i
@@ -68,6 +70,8 @@ Lecturas
                                             class="btn btn-secondary ml-1 mr-1 "><i class="far fa-hand-point-left"></i>
                                             Cancelar</a>
                                         <!--Fin botones-->
+                                    
+                                        
                                     </div>
                                 </div>
 
@@ -121,12 +125,7 @@ Lecturas
                                 <div class="row">
                                 <!-- Inicio totales -->
                                 <div class="col-4">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <label class=" input-group-text text-muted">T.
-                                                M3</label>
-                                        </div>
-                                    </div>
+                                    
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
                                             <label class="input-group-text text-muted">T.
@@ -152,6 +151,21 @@ Lecturas
                                     </div>
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">Administración</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">Alcantarillado</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text text-muted">Derecho conexión</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
                                             <label class="input-group-text text-muted">Subtotal</label>
                                         </div>
                                     </div>
@@ -172,12 +186,7 @@ Lecturas
                                 </div>
                                 
                                 <div class="col-4">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_consumo" name="total_consumo" class="form-control text-right"
-                                            value="{{total_consumo}}"readonly>
-                                        </div>
-                                    </div>
+                                    
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
                                             <input type="text" id="id_total_base" name="total_base" class="form-control text-right" 
@@ -202,6 +211,25 @@ Lecturas
                                             value="{{total_consumo_maximo}}" readonly>
                                         </div>
                                     </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <input type="text" id="id_total_administracion" name="total_administracion" class="form-control text-right  "
+                                                value="{{total_administracion}}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <input type="text" id="id_total_alcantarillado" name="total_alcantarillado" class="form-control text-right "
+                                                value="{{total_alcantarillado}}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="input-group ">
+                                        <div class="input-group-prepend">
+                                            <input type="text" id="id_total_derecho_conexion" name="total_derecho_conexion" class="form-control text-right"
+                                                value="{{total_derecho_conexion}}" readonly>
+                                        </div>
+                                    </div>
+
                                     <div class="input-group ">
                                         <div class="input-group-prepend">
                                             <input type="text" id="id_total_subtotal" name="total_subtotal" class="form-control text-right text-success "

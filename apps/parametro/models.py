@@ -42,6 +42,14 @@ class Servicio(ClaseModelo):
     base_consumo = models.IntegerField("Base consumo M3", default=11)
     consumo_maximo = models.IntegerField("Consumo máximo", default=30)
     valor_consumo_maximo = models.DecimalField("Valor consumo máximo", max_digits=5, decimal_places=2, default=20)
+    administracion = models.DecimalField(
+        "Gastos administrativos", max_digits=5, decimal_places=2, default=0)
+    alcantarillado = models.DecimalField(
+        "Alcantarillado", max_digits=5, decimal_places=2, default=0)
+    derecho_conexion = models.DecimalField(
+        "Derecho conexion", max_digits=5, decimal_places=2, default=400)
+    derecho_conexion_nuevo_comunidad = models.DecimalField(
+        "Derecho conexion nuevo comunidad", max_digits=5, decimal_places=2, default=800)
 
     class Meta:
 
@@ -58,6 +66,8 @@ class Servicio(ClaseModelo):
     def save(self):
 
         self.descripcion = self.descripcion.upper()
+        self.derecho_conexion_nuevo_comunidad = float(
+            self.derecho_conexion) * 2
         # Invoco al metodo save() del padre
         super(Servicio, self).save()
 
@@ -91,13 +101,12 @@ class Tarifa(ClaseModelo):
 
 
 class Multa(ClaseModelo):
-    descripcion = models.CharField("descripción de multa o sanción", max_length=50)
+    descripcion = models.CharField("Descripción", max_length=50)
     valor = models.DecimalField("Valor", max_digits=5, decimal_places=2)
 
     class Meta:
 
-        verbose_name = "Multa y Sanción"
-        verbose_name_plural = "Multas y Sanciones"
+        verbose_name_plural = "Multas y otros valores"
         ordering = ['descripcion']
 
     def __str__(self):

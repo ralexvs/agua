@@ -23,6 +23,12 @@ class Recaudacion(ClaseModelo):
     total_base_reserva = models.DecimalField("Tarifa base reserva", max_digits=10, decimal_places=2, null=True, blank=True)
     total_excedente = models.DecimalField("Total excedente", max_digits=10, decimal_places=2, null=True, blank=True)
     total_consumo_maximo = models.DecimalField("Total consumo máximo", max_digits=10, decimal_places=2, null=True, blank=True)
+    total_administracion = models.DecimalField(
+        "Administración", max_digits=10, decimal_places=2, default=0)
+    total_alcantarillado = models.DecimalField(
+        "Alcantarillado", max_digits=10, decimal_places=2, default=0)
+    total_derecho_conexion = models.DecimalField(
+        "Total derecho conexion", max_digits=10, decimal_places=2, default=0)
     subtotal = models.DecimalField("Subtotal", max_digits=10, decimal_places=2, null=True, blank=True)
     total_descuento = models.DecimalField("T. descuento", max_digits=10, decimal_places=2, null=True, blank=True)
     total_general = models.DecimalField("Total general", max_digits=10, decimal_places=2, null=True, blank=True)
@@ -35,7 +41,8 @@ class Recaudacion(ClaseModelo):
 
     def save(self):
   
-        self.subtotal = float(self.total_base) + float(self.total_base_reserva) + float(self.total_excedente) + float(self.total_consumo_maximo)
+        self.subtotal = float(self.total_base) + float(self.total_base_reserva) + float(
+            self.total_excedente) + float(self.total_consumo_maximo) + float(self.total_administracion) + float(self.total_alcantarillado) + float(self.total_derecho_conexion)
         self.total_general = float(self.subtotal)-float(self.total_descuento)
 
         # Invoco al metodo save() del padre
@@ -56,6 +63,12 @@ class RecaudacionDetalle(ClaseModelo):
     valor_consumo_maximo = models.DecimalField(
         "Valor consumo máximo", max_digits=10, decimal_places=2, default=0)
     valor_excedente = models.DecimalField("Valor por excedente", max_digits=10, decimal_places=2, default=0)
+    administracion = models.DecimalField(
+        "Administración", max_digits=10, decimal_places=2, default=0)
+    alcantarillado = models.DecimalField(
+        "Alcantarillado", max_digits=10, decimal_places=2, default=0)
+    derecho_conexion = models.DecimalField(
+        "Derecho conexión", max_digits=10, decimal_places=2, default=0)
     total = models.DecimalField("Total", max_digits=10, decimal_places=2, default=0)
     
     class Meta:
@@ -67,7 +80,9 @@ class RecaudacionDetalle(ClaseModelo):
     def save(self):
     
         self.total = float(self.base) + float(self.base_reserva) + \
-            float(self.valor_excedente) + float(self.valor_consumo_maximo)
+            float(self.valor_excedente) + float(self.valor_consumo_maximo) + \
+            float(self.administracion) + \
+            float(self.alcantarillado) + float(self.derecho_conexion)
 
         # Invoco al metodo save() del padre
         super(RecaudacionDetalle, self).save()

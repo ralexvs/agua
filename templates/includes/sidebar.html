@@ -40,21 +40,16 @@
             <h6 class="dropdown-header">Planillas:</h6>
             <a class="dropdown-item" href="{% url 'catastro:tipolectura_list' %}">Tipo de lectura</a>
             <a class="dropdown-item" href="{% url 'catastro:lectura_list' %}">Tomas de lectura</a>
-            <a class="dropdown-item " href="blank.html">Generación de planillas</a>
+            <a class="dropdown-item " href="{% url 'catastro:lecturadetalle_list' %}">Ingreso de multas y otros</a>
             
         </div>
     </li>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdownRecaudacion" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
+    <li class="nav-item ">
+        <a class="nav-link " href="{% url 'recaudacion:lectura_detalle_list' %}" >
             <i class="fas fa-money-check-alt"></i>
             <span class="text-light">Recaudación</span>
         </a>
-        <div class="dropdown-menu" aria-labelledby="pagesDropdownRecaudacion">
-            <a class="dropdown-item" href="#">Apertura de caja</a>
-            <a class="dropdown-item" href="{% url 'recaudacion:lectura_detalle_list' %}">Cobro de planillas</a>
-            <a class="dropdown-item" href="forgot-password.html">Cierre de caja</a>
-        </div>
+        
     </li>
     
     <h6 class="dropdown-header"><b>Informes</b></h6>

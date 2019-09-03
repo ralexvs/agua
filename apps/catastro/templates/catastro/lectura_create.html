@@ -13,9 +13,9 @@ Lecturas
 </li>
 
 {% if encabezado %}
-<li class="breadcrumb-item active"><i class="far fa fa-edit"></i>Editar</li>
+<li class="breadcrumb-item active"><i class="far fa fa-edit"></i>Editar lecturas</li>
 {% else %}
-<li class="breadcrumb-item active"><i class="far fa fa-file-alt"></i> Nuevo</li>
+<li class="breadcrumb-item active"><i class="far fa fa-file-alt"></i> Nueva toma de lecturas</li>
 {%endif%}
 {% endblock breadcrumb_item %}
 
@@ -32,7 +32,7 @@ Lecturas
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-muted text-uppercase mb-1">
-                            {% if encabezado %}Editar{% else %}Nueva{% endif %} Lectura
+                            <!--{% if encabezado %}Editar{% else %}Nueva{% endif %} Lectura -->
                         </div>
                         <div class="dropdown-divider"></div>
                         <div class="row">
@@ -52,6 +52,9 @@ Lecturas
                                     <label class="col-form-label-sm text-muted">Bas. reserva</label>{{form_enc.total_base_reserva}}</li>
                                     <label class="col-form-label-sm text-muted">Excedente</label>{{form_enc.total_excedente}}</li>
                                     <label class="col-form-label-sm text-muted">Consu. maximo</label>{{form_enc.total_consumo_maximo}}</li>
+                                    <label class="col-form-label-sm text-muted">Administracion</label>{{form_enc.total_administracion}}</li>
+                                    <label class="col-form-label-sm text-muted">Alcantarillado</label>{{form_enc.total_alcantarillado}}</li>
+                                    <label class="col-form-label-sm text-muted">Derecho conexión</label>{{form_enc.total_derecho_conexion}}</li>
                                     <label class="col-form-label-sm text-muted">TOTAL GENERAL</label>{{form_enc.total_general}}</li>
                                 </div>
                             </div>
@@ -182,19 +185,11 @@ Lecturas
                                         <!--Fin botones-->
                                     </div>
                                 </div>
-                            </div>
-                            <!--Fin lista catastro-->
-                        </div>
-                        <!--Fin fila lectura y catastro-->
-                        <div class="row">
-                            <!--inicio detalle lectura-->
-                            <div class="col">
                                 <!-- DataTables Example -->
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered table-hover" style="width=100%"
-                                                cellspacing="0">
+                                            <table class="table table-bordered table-hover" style="width=100%" cellspacing="0">
                                                 <thead class="table-info">
                                                     <tr>
                                                         <th class="text-muted">Lectura</th>
@@ -219,12 +214,15 @@ Lecturas
                                                         <td>{{det.estado|yesno:'Adeuda,Pagado'}}
                                                         </td>
                                                         <td>
-
+                                                            <a href="{% url 'catastro:multadetalle_create' det.id %}">
+                                                                <button type="button" class="btn btn-warning btn-circle"><i class="far fa-hand-pointer"
+                                                                    ></i></button></a>
+                                
                                                             <button
                                                                 onclick="return abrir_modal('{% url 'catastro:lecturadetalle_delete' encabezado.pk det.id %}')"
-                                                                class="btn btn-danger btn-circle" role="button"><abbr
-                                                                    title="Quitar"><i
+                                                                class="btn btn-danger btn-circle" role="button"><abbr title="Quitar"><i
                                                                         class="fas fa-trash-alt fa-xs"></i></abbr></button>
+                                                            
                                                         </td>
                                                     </tr>
                                                     {% endfor%}
@@ -233,6 +231,14 @@ Lecturas
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <!--Fin lista catastro-->
+                        </div>
+                        <!--Fin fila lectura y catastro-->
+                        <div class="row">
+                            <!--inicio detalle lectura-->
+                            <div class="col">
+                               
 
                             </div>
 

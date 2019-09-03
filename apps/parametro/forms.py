@@ -38,6 +38,10 @@ class ServicioForm(forms.ModelForm):
             'base_consumo',
             'consumo_maximo',
             'valor_consumo_maximo',
+            'administracion',
+            'alcantarillado',
+            'derecho_conexion',
+            'derecho_conexion_nuevo_comunidad',
             'estado',
         )
         widget = {'descripcion': forms.TextInput}

@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from .models import Medidor, Barrio, Abonado, Catastro, TipoLectura, Lectura, LecturaDetalle
+from .models import Medidor, Barrio, Abonado, Catastro, TipoLectura, Lectura, LecturaDetalle, MultaDetalle
 from apps.parametro.models import Tarifa, Multa, Pago
 from django.views.generic.list import ListView
 from django.views.generic.edit import DeleteView
 from apps.core.views import SinPrivilegios, VistaBaseCreate, VistaBaseUpdate
 from django.urls import reverse_lazy
-from .forms import MedidorForm, BarrioForm, AbonadoForm, CatastroForm, TipoLecturaForm, LecturaForm
+from .forms import MedidorForm, BarrioForm, AbonadoForm, CatastroForm, TipoLecturaForm, LecturaForm, MultaDetalleForm
 from django.contrib.auth.decorators import login_required, permission_required
 import datetime
 from django.utils import timezone
@@ -438,6 +438,9 @@ def lectura(request, lectura_id=None):
                 'total_base_reserva': enc.total_base_reserva,
                 'total_excedente': enc.total_excedente,
                 'total_consumo_maximo': enc.total_consumo_maximo,
+                'total_administracion': enc.total_administracion,
+                'total_alcantarillado': enc.total_alcantarillado,
+                'total_derecho_conexion': enc.total_derecho_conexion,
                 'total_general': enc.total_general,
             }
             #Rendirizamos el formulario con los campos que devuelve enc.
@@ -456,6 +459,9 @@ def lectura(request, lectura_id=None):
         total_base_reserva=0
         total_excedente = 0
         total_consumo_maximo = 0
+        total_administracion = 0
+        total_alcantarillado = 0
+        total_derecho_conexion = 0
         total_general = 0
 
         #si no se envia lectura_id quiere decir que el encabezado no existe
@@ -490,6 +496,18 @@ def lectura(request, lectura_id=None):
         catas = Catastro.objects.filter(pk=catastro).first()
         base = catas.servicio.base
         base_reserva=catas.servicio.base_reserva
+        administracion = catas.servicio.administracion
+        alcantarillado = catas.servicio.alcantarillado
+        if catas.peticionario == 'NEW':
+            derecho_conexion = catas.servicio.derecho_conexion
+            peticionario = catas.peticionario
+        elif catas.peticionario == 'NEW_COM':
+            derecho_conexion = catas.servicio.derecho_conexion_nuevo_comunidad
+            peticionario = catas.peticionario
+        else:
+            derecho_conexion = 0
+            peticionario = catas.peticionario
+
 
         if int(consumo) > catas.servicio.base_consumo:
             
@@ -529,6 +547,10 @@ def lectura(request, lectura_id=None):
             base = base,
             base_reserva=base_reserva,
             valor_consumo_maximo=valor_consumo_maximo,
+            administracion=administracion,
+            alcantarillado=alcantarillado,
+            derecho_conexion = derecho_conexion,
+            peticionario = peticionario,
             tipo_lectura=tipo,
             uc = request.user
 
@@ -542,6 +564,11 @@ def lectura(request, lectura_id=None):
                 lectura=lectura_id).aggregate(Sum('base_reserva'))
             total_excedente = LecturaDetalle.objects.filter(lectura=lectura_id).aggregate(Sum('valor_excedente'))
             total_consumo_maximo = LecturaDetalle.objects.filter(lectura=lectura_id).aggregate(Sum('valor_consumo_maximo'))
+            total_administracion = LecturaDetalle.objects.filter(
+                lectura=lectura_id).aggregate(Sum('administracion'))
+            total_alcantarillado = LecturaDetalle.objects.filter(lectura=lectura_id).aggregate(Sum('alcantarillado'))
+            total_derecho_conexion = LecturaDetalle.objects.filter(
+                    lectura=lectura_id).aggregate(Sum('derecho_conexion'))
             total_general = LecturaDetalle.objects.filter(
                 lectura=lectura_id).aggregate(Sum('total'))
 
@@ -550,6 +577,9 @@ def lectura(request, lectura_id=None):
             enc.total_base_reserva = total_base_reserva['base_reserva__sum']
             enc.total_excedente = total_excedente['valor_excedente__sum']
             enc.total_consumo_maximo = total_consumo_maximo['valor_consumo_maximo__sum']
+            enc.total_administracion = total_administracion['administracion__sum']
+            enc.total_alcantarillado = total_alcantarillado['alcantarillado__sum']
+            enc.total_derecho_conexion = total_derecho_conexion['derecho_conexion__sum']
             enc.total_general = total_general['total__sum']
             enc.save()
         
@@ -595,4 +625,80 @@ def search(request):
     
     return render(request, template_name, {'results':results, 'query':query, 'today':today})
     
+#CRUD TipoLectura =======================================================
 
+
+class MultaDetalleList(SinPrivilegios, ListView):
+
+    permission_required = 'catastro.view_multadetalle'
+    model = MultaDetalle
+
+
+class MultaDetalleCreate(VistaBaseCreate):
+
+    permission_required = 'catastro.add_multadetalle'
+    model = MultaDetalle
+    template_name = "catastro/multadetalle_form.html"
+    form_class = MultaDetalleForm
+    success_url = reverse_lazy('catastro:tipolectura_list')
+
+
+class MultaDetalleUpdate(VistaBaseUpdate):
+
+    permission_required = 'catastro.change_multadetalle'
+    model = MultaDetalle
+    template_name = "catastro/multadetalle_form.html"
+    form_class = MultaDetalleForm
+    success_url = reverse_lazy('catastro:multadetalle_list')
+
+
+class MultaDetalleDelete(SinPrivilegios, DeleteView):
+
+    permission_required = 'catastro.delete_multadetalle'
+    model = MultaDetalle
+    template_name = "catastro/multadetalle_del.html"
+    success_url = reverse_lazy('catastro:multadetalle_list')
+
+
+@login_required(login_url='login')
+@permission_required('catastro.view_multadetalle', login_url='sin_privilegio')
+def multa_detalle(request, lectura_id=None):
+
+    template_name = 'catastro/multadetalle_form.html'
+    multa = Multa.objects.filter(estado=True)
+    lectura = LecturaDetalle.objects.filter(pk=lectura_id).first()
+    
+    contexto = {}
+
+    if request.method == 'GET':
+        #Filtramos la información que visualizamos en pantalla
+        detalle = MultaDetalle.objects.filter(lectura=lectura_id)
+        contexto = {'multa': multa, 'lectura': lectura, 'detalle': detalle, }
+
+    if request.method == 'POST':
+        
+        mul = request.POST.get('multa')
+        multa = Multa.objects.filter(pk=mul).first()
+        cantidad = request.POST.get('cantidad')
+        valor = request.POST.get('valor')
+        
+        print('Imprimiendo  ' ,lectura.id, multa, 'valores', cantidad, valor)
+        if lectura_id:
+            enc = MultaDetalle(
+                lectura = lectura,
+                multa = multa,
+                cantidad = int(cantidad),
+                valor = float(valor),
+                uc=request.user
+            )
+            if enc:
+                enc.save()
+                lectura_id =enc.id
+
+
+    return render(request, template_name, contexto)
+
+class LecturaDetalleList(SinPrivilegios, ListView):
+  
+    permission_required = 'catastro.view_lecturadetalle'
+    model = LecturaDetalle

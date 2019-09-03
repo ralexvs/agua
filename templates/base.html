@@ -24,6 +24,9 @@
 
     <!-- Custom styles for this dataTable-->
     <link href="{% static "vendor/dataTables/jquery.dataTables.min.css " %}" rel="stylesheet">
+    <link href="{% static "vendor/dataTables/datatables.min.css " %}" rel="stylesheet">
+    
+    <link href="{% static "vendor/dataTables/buttons.dataTables.min.css " %}" rel="stylesheet">
 
     <!-- Custom styles for this jquery-confirm-->
     <link href="{% static "vendor/jquery-confirm/jquery-confirm.min.css" %}" rel="stylesheet">
@@ -147,6 +150,14 @@
   <!-- Custom scripts for all dataTables-->
   <script src="{% static "vendor/datatables/jquery.dataTables.min.js " %}"></script>
 
+  <script src="{% static "vendor/datatables/dataTables.buttons.min.js " %}"></script>
+  <script src="{% static "vendor/datatables/buttons.flash.min.js " %}"></script>
+  <script src="{% static "vendor/datatables/jszip.min.js " %}"></script>
+  <script src="{% static "vendor/datatables/pdfmake.min.js " %}"></script>
+  <script src="{% static "vendor/datatables/vfs_fonts.js " %}"></script>
+  <script src="{% static "vendor/datatables/buttons.html5.min.js " %}"></script>
+  <script src="{% static "vendor/datatables/buttons.print.min.js" %}"></script>
+
   <!-- Custom styles for this jquery-confirm-->
   <script src="{% static "vendor/jquery-confirm/jquery-confirm.min.js " %}"></script>
   
@@ -226,7 +237,11 @@
 
       $("#sidebarToggle").click();
       
-      $('.table').DataTable({
+      $('table.display').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+          'copy', 'excel', 'pdf', 'print'
+        ],
         "pagingType": "full_numbers",
         language: {
           "sProcessing": "Procesando...",

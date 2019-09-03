@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    lecturas
+{% endblock title %}
+
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
+    <a href="#"> Nuevo</a>
+</li>
+<li class="breadcrumb-item"><i class="fas fa-file-pdf text-danger"></i>
+    <a href="#" target="reportes"> Listado</a>
+</li>
+
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i> 
+    {% if object_list %}<span class="text-success"> Ingreso de multas</span>{% else %} <span
+        class="text-danger">No existen lecturas </span>{% endif%}</li>
+{% endblock breadcrumb_item %}
+
+{% block linea %}
+    
+{% endblock linea %}
+    
+    
+{% block content %}
+
+
+<!-- DataTables Example -->
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="display">
+                <thead class="">
+                    <tr>
+                        <th class="text-muted">Lectura</th>
+                        <th class="text-muted">Catastro</th>
+                        <th class="text-muted">L. Ant.</th>
+                        <th class="text-muted">L. Act.</th>
+                        <th class="text-muted">M3</th>
+                        <th class="text-muted">Lectura</th>
+                        <th class="text-muted">Recaudción</th>
+                        <th class="text-muted">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for det in object_list %}
+                    <tr>
+                        <td>{{det.lectura}}</td>
+                        <td>{{det.catastro}}</td>
+                        <td>{{det.lectura_anterior}}</td>
+                        <td>{{det.lectura_actual}}</td>
+                        <td>{{det.consumo}}</td>
+                        <td>{{det.tipo_lectura}}</td>
+                        <td>{{det.estado|yesno:'Adeuda,Pagado'}}
+                        </td>
+                        <td>
+                            <a href="">
+                                <button type="button" class="btn btn-warning btn-circle"><i
+                                        class="far fa-hand-pointer"></i></button></a>
+
+                            <button
+                                
+                                class="btn btn-danger btn-circle" role="button"><abbr title="Quitar"><i
+                                        class="fas fa-trash-alt fa-xs"></i></abbr></button>
+
+                        </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

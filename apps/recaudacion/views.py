@@ -53,6 +53,9 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
     total_base_reserva=0
     total_excedente=0
     total_consumo_maximo =0
+    total_administracion = 0
+    total_alcantarillado=0
+    total_derecho_conexion = 0
     descuento = 0
     subtotal = 0
     total_descuento = 0
@@ -79,6 +82,12 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
             catastro=catastro_id, estado=True).aggregate(Sum('valor_excedente'))
         total_consumo_maximo = LecturaDetalle.objects.filter(
             catastro=catastro_id, estado=True).aggregate(Sum('valor_consumo_maximo'))
+        total_administracion = LecturaDetalle.objects.filter(
+            catastro=catastro_id, estado=True).aggregate(Sum('administracion'))
+        total_alcantarillado = LecturaDetalle.objects.filter(
+            catastro=catastro_id, estado=True).aggregate(Sum('alcantarillado'))
+        total_derecho_conexion = LecturaDetalle.objects.filter(
+            catastro=catastro_id, estado=True).aggregate(Sum('derecho_conexion'))
         total_general = LecturaDetalle.objects.filter(
             catastro=catastro_id, estado=True).aggregate(Sum('total'))
 
@@ -87,10 +96,16 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
         total_base_reserva = total_base_reserva['base_reserva__sum']
         total_excedente = total_excedente['valor_excedente__sum']
         total_consumo_maximo = total_consumo_maximo['valor_consumo_maximo__sum']
-        subtotal = total_base + total_base_reserva+total_excedente+total_consumo_maximo
+        total_administracion = total_administracion['administracion__sum']
+        total_alcantarillado = total_alcantarillado['alcantarillado__sum']
+        total_derecho_conexion = total_derecho_conexion['derecho_conexion__sum']
+        subtotal = total_base + total_base_reserva+total_excedente + \
+            total_consumo_maximo + total_administracion + \
+            total_alcantarillado+total_derecho_conexion
         valor = cat.descuento.valor
         if valor > 0:
             total_descuento = (subtotal * valor)/100
+        
         
         total_general = total_general['total__sum'] - round(total_descuento, 2)
 
@@ -105,6 +120,9 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
                     'total_base_reserva': total_base_reserva,
                     'total_excedente': total_excedente,
                     'total_consumo_maximo': total_consumo_maximo,
+                    'total_administracion' : total_administracion,
+                    'total_alcantarillado' : total_alcantarillado,
+                    'total_derecho_conexion' : total_derecho_conexion,
                     'subtotal': subtotal,
                     'total_descuento': round(total_descuento, 2),
                     'total_general': total_general,
@@ -126,6 +144,12 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
             catastro=catastro_id, estado=True).aggregate(Sum('valor_excedente'))
         total_consumo_maximo = LecturaDetalle.objects.filter(
             catastro=catastro_id, estado=True).aggregate(Sum('valor_consumo_maximo'))
+        total_administracion = LecturaDetalle.objects.filter(
+            catastro=catastro_id, estado=True).aggregate(Sum('administracion'))
+        total_alcantarillado = LecturaDetalle.objects.filter(
+            catastro=catastro_id, estado=True).aggregate(Sum('alcantarillado'))
+        total_derecho_conexion = LecturaDetalle.objects.filter(
+            catastro=catastro_id, estado=True).aggregate(Sum('derecho_conexion'))
         total_general = LecturaDetalle.objects.filter(
             catastro=catastro_id, estado=True).aggregate(Sum('total'))
 
@@ -134,7 +158,10 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
         total_base_reserva = total_base_reserva['base_reserva__sum']
         total_excedente = total_excedente['valor_excedente__sum']
         total_consumo_maximo = total_consumo_maximo['valor_consumo_maximo__sum']
-        subtotal = total_base + total_base_reserva+total_excedente+total_consumo_maximo
+        total_administracion = total_administracion['administracion__sum']
+        total_alcantarillado = total_alcantarillado['alcantarillado__sum']
+        total_derecho_conexion = total_derecho_conexion['derecho_conexion__sum']
+        subtotal = total_base + total_base_reserva+total_excedente+total_consumo_maximo + total_administracion + total_alcantarillado+total_derecho_conexion
         valor = cat.descuento.valor
         if valor > 0:
             total_descuento = (subtotal * valor)/100
@@ -154,6 +181,9 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
                 total_base_reserva=total_base_reserva,
                 total_excedente=total_excedente,
                 total_consumo_maximo=total_consumo_maximo,
+                total_administracion = total_administracion,
+                total_alcantarillado = total_alcantarillado,
+                total_derecho_conexion = total_derecho_conexion,
                 #subtotal = subtotal,
                 total_descuento = total_descuento,
                 #total_general=total_general,
@@ -178,6 +208,9 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
                 base_reserva=deta.base_reserva,
                 valor_consumo_maximo=deta.valor_consumo_maximo,
                 valor_excedente=deta.valor_excedente,
+                administracion = deta.administracion,
+                alcantarillado = deta.alcantarillado,
+                derecho_conexion = deta.derecho_conexion,
                 uc = request.user,
             )
             if det:

@@ -24,23 +24,13 @@
 <div class="card mb-3">
         <div class="card-body">
         <div class="table-responsive">
-            <table 
-            id="table"
-            data-locale="es-ES"
-            data-toggle="table" 
-            data-pagination="true"
-            data-search="true"
-            data-show-columns="true"
-            data-show-toggle="true"
-            data-show-fullscreen="true"
-            data-sortable="true"
-
-            >
-                <thead class="table-info">
+            <table class="display">
+                <thead class="">
                     <tr>
-                        <th class="text-muted" data-field="identificacion" data-sortable="true">Identificación</th>
-                        <th class="text-muted" data-field="apellidos" data-sortable="true">Apellidos</th>
-                        <th class="text-muted" data-field="nombres" data-sortable="true">Nombres</th>
+                        
+                        <th class="text-muted">Apellidos</th>
+                        <th class="text-muted" >Nombres</th>
+                        <th class="text-muted">Identificación</th>
                         <th class="text-muted">Celular</th>
                         <th class="text-muted">Sexo</th>
                         <th class="text-muted">Estado</th>
@@ -50,11 +40,18 @@
                 <tbody>
                 {%for item in object_list %}
                     <tr>
-                        <td>{{item.identificacion}}</td>
+                        
                         <td>{{item.apellidos}}</td>
                         <td>{{item.nombres}}</td>
+                        <td>{{item.identificacion}}</td>
                         <td>{{item.celular}}</td>
-                        <td>{{item.sexo}}</td>
+                        <td>
+                            {% if item.sexo == 'H' %}
+                                Hombre
+                            {% else %}
+                                Mujer
+                            {%endif%}
+                            </td>
                         <td >{#item.estado|yesno:'Activo,Inactivo'#}
                             <div onclick="inactivar('{{item.id}}')" >
                             {% if item.estado%}
@@ -66,8 +63,7 @@
                         </td>
                         <td>
                             <a href="#" class="btn btn-primary btn-circle btn-sm" role="button" onclick="return abrir_modal('{% url 'catastro:abonado_update' item.id %}')" ><abbr title="Editar"><i class="far fa-edit fa-xs"></i></abbr></a>
-                            <a onclick="return abrir_modal('{% url 'catastro:abonado_inactivar' item.id %}')" href="#"
-                                class="btn btn-secondary btn-circle btn-sm" role="button"><abbr title="Inactivar"><i class="far fa-thumbs-down fa-xs"></i></abbr></a>
+                            
                             <a href="#" onclick="return abrir_modal('{% url 'catastro:abonado_delete' item.id %}')" class="btn btn-danger btn-circle btn-sm" role="button"><abbr title="Eliminar"><i class="far fa-trash-alt fa-xs"></i></abbr></a>
                         </td>
                     </tr>
@@ -114,13 +110,4 @@
 {% endblock varios %}
 
 
-{% block js_pages %}
-<script>
-    $(document).ready(function () {
-    
-    $("#sidebarToggle").click();
-    });
-</script>
-
-{% endblock js_pages %}
     

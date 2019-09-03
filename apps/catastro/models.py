@@ -61,13 +61,14 @@ class Abonado(ClaseModelo):
         "Teléfono", max_length=15, null=True, blank=True)
     celular = models.CharField("Celular", max_length=15, null=True, blank=True)
     fecha_nacimiento = models.DateField(verbose_name='Fecha de Nacimieno', null=True,blank=True)
-    HOM = 'Hombre'
-    MUJ = 'Mujer'
+    HOMBRE ='H'
+    MUJER ='M'
     TIPO_SEXO = [
-        (HOM, 'Hombre'),
-        (MUJ, 'Mujer')
+        (HOMBRE, 'Hombre'),
+        (MUJER, 'Mujer')
         ]
-    sexo = models.CharField("Sexo", max_length=50, choices=TIPO_SEXO, default='HOM')
+    sexo = models.CharField("Sexo", max_length=50,
+                            choices=TIPO_SEXO, default=HOMBRE)
     barrio = models.ForeignKey("barrio", verbose_name="Barrio / Sector", on_delete=models.CASCADE)
     foto = models.ImageField(verbose_name='Retrato', upload_to='parametro/abonado/', height_field=None, width_field=None, max_length=None, blank=True, null=True) 
 
@@ -99,8 +100,19 @@ class Catastro(ClaseModelo):
     pago = models.ForeignKey("parametro.Pago", verbose_name="Forma de pago", on_delete=models.CASCADE)
     descuento = models.ForeignKey("parametro.Descuento", verbose_name="Descuento", on_delete=models.CASCADE)
     descripcion = models.CharField("descripcion", max_length=254, blank=True, null=True)
-    suspender = models.BooleanField("Suspender", default=False)
-
+    suspender = models.BooleanField("Suspendido", default=False)
+    NUEVO = 'NEW'
+    ANTIGUO = 'ANT'
+    NUEVO_COMUNIDAD ='NEW_COM'
+    TIPO_PETICIONARIO = [
+        (NUEVO, 'Nuevo'),
+        (ANTIGUO, 'Antiguo'),
+        (NUEVO_COMUNIDAD, 'Nuevo en la comunidad'),
+    ]
+    peticionario = models.CharField("Peticionario", max_length=7,
+                                    choices=TIPO_PETICIONARIO, default=ANTIGUO)
+    derecho_conexion = models.BooleanField("Derecho conexión", default=False)
+    alcantarillado = models.BooleanField("Alcantarillado", default=False)
     class Meta:
 
         verbose_name = "Planilla catastral"
@@ -112,6 +124,16 @@ class Catastro(ClaseModelo):
         
         return '{}{}{}{}{}'.format(str(self.numero)," ", self.abonado.apellidos," " ,self.abonado.nombres)
 
+    def save(self):
+        if self.peticionario =='NEW':
+            self.derecho_conexion = True
+        elif self.peticionario == 'NEW_COM':
+            self.derecho_conexion = True
+        else:
+            self.derecho_conexion = False
+
+        # Invoco al metodo save() del padre
+        super(Catastro, self).save()
 
 class TipoLectura(ClaseModelo):
     
@@ -141,6 +163,12 @@ class Lectura(ClaseModelo):
     total_excedente = models.DecimalField("Total excedente", max_digits=10, decimal_places=2, null=True, blank=True)
     total_consumo_maximo = models.DecimalField(
         "Total consumo máximo", max_digits=10, decimal_places=2, null=True, blank=True)
+    total_administracion = models.DecimalField(
+        "Administración", max_digits=10, decimal_places=2, default=0)
+    total_alcantarillado = models.DecimalField(
+        "Alcantarillado", max_digits=10, decimal_places=2, default=0)
+    total_derecho_conexion = models.DecimalField(
+        "Total derecho conexion", max_digits=10, decimal_places=2, default=0)
     total_general = models.DecimalField(
         "Total general", max_digits=10, decimal_places=2, null=True, blank=True)
 
@@ -151,7 +179,7 @@ class Lectura(ClaseModelo):
         ordering = ['id']
 
     def __str__(self):
-        return '{}'.format(self.periodo.strftime('%Y/%b/%d'))
+        return '{}'.format(self.periodo.strftime('%b/%Y'))
 
 class LecturaDetalle(ClaseModelo):
 
@@ -166,6 +194,13 @@ class LecturaDetalle(ClaseModelo):
     tipo_lectura = models.ForeignKey("TipoLectura", verbose_name="Tipo de lectura", on_delete=models.CASCADE)
     valor_consumo_maximo = models.DecimalField("Valor consumo máximo", max_digits=10, decimal_places=2, default=0)
     valor_excedente = models.DecimalField("Valor por excedente", max_digits=10, decimal_places=2, default=0)
+    administracion = models.DecimalField(
+        "Administración", max_digits=10, decimal_places=2, default=0)
+    alcantarillado = models.DecimalField(
+        "Alcantarillado", max_digits=10, decimal_places=2, default=0)
+    derecho_conexion = models.DecimalField(
+        "Derecho conexión", max_digits=10, decimal_places=2, default=0)
+    peticionario = models.CharField("Peticionario", max_length=7, null = True, blank=True)
     total = models.DecimalField("Total", max_digits=10, decimal_places=2, default=0)
 
     class Meta:
@@ -180,10 +215,34 @@ class LecturaDetalle(ClaseModelo):
     def save(self):
 
         self.consumo = int(self.lectura_actual) - int(self.lectura_anterior)
-        self.total = float(self.base)+float(self.base_reserva)+float(self.valor_excedente)+float(self.valor_consumo_maximo)
+        self.total = float(self.base)+float(self.base_reserva)+float(self.valor_excedente) + \
+            float(self.valor_consumo_maximo)+float(self.administracion)+float(self.alcantarillado)+float(self.derecho_conexion)
 
         # Invoco al metodo save() del padre
         super(LecturaDetalle, self).save()
+
+
+class MultaDetalle(ClaseModelo):
+
+    lectura = models.ForeignKey(LecturaDetalle, verbose_name="Lectura", on_delete=models.CASCADE)
+    multa = models.ForeignKey(Multa, verbose_name="Multa", on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField("Cantidad", default=1)
+    valor = models.DecimalField("Valor", max_digits=10, decimal_places=2, default=0)
+    total = models.DecimalField(
+        "Valor", max_digits=10, decimal_places=2, default=0)
+    
+    class Meta:
+        verbose_name_plural = 'Detalle de multas'
+        # Unique compuesto
+        unique_together = ('lectura', 'multa')
+
+    def __str__(self):
+        return str(self.total)
+
+    def save(self):
+        self.total = int(self.cantidad) * float(self.valor)
+        # Invoco al metodo save() del padre
+        super(MultaDetalle, self).save()
 
 
 
@@ -195,6 +254,7 @@ def letura_detalle_post_delete_receiver(sender, instance, **kwargs):
 
     lectura_id = instance.lectura.id
     id_medidor = instance.catastro.medidor.id
+    id_catastro = instance.catastro.id
 
     enc = Lectura.objects.filter(pk=lectura_id).first()
     if enc:
@@ -207,6 +267,12 @@ def letura_detalle_post_delete_receiver(sender, instance, **kwargs):
             lectura=lectura_id).aggregate(Sum('valor_excedente'))
         total_consumo_maximo = LecturaDetalle.objects.filter(
             lectura=lectura_id).aggregate(Sum('valor_consumo_maximo'))
+        total_administracion = LecturaDetalle.objects.filter(
+            lectura=lectura_id).aggregate(Sum('administracion'))
+        total_alcantarillado = LecturaDetalle.objects.filter(
+            lectura=lectura_id).aggregate(Sum('alcantarillado'))
+        total_derecho_conexion = LecturaDetalle.objects.filter(
+            lectura=lectura_id).aggregate(Sum('derecho_conexion'))
         total_general = LecturaDetalle.objects.filter(
             lectura=lectura_id).aggregate(Sum('total'))
         
@@ -215,6 +281,9 @@ def letura_detalle_post_delete_receiver(sender, instance, **kwargs):
         enc.total_base_reserva = total_base_reserva['base_reserva__sum']
         enc.total_excedente = total_excedente['valor_excedente__sum']
         enc.total_consumo_maximo = total_consumo_maximo['valor_consumo_maximo__sum']
+        enc.total_administracion = total_administracion['administracion__sum']
+        enc.total_alcantarillado = total_alcantarillado['alcantarillado__sum']
+        enc.total_derecho_conexion = total_derecho_conexion['derecho_conexion__sum']
         enc.total_general = total_general['total__sum']
 
         enc.save()
@@ -224,12 +293,19 @@ def letura_detalle_post_delete_receiver(sender, instance, **kwargs):
         li = int(instance.lectura_anterior)
         med.lectura_inicial = li
         med.save()
+    
+    cat = Catastro.objects.filter(pk=id_catastro).first()
+    if cat:
+        peti = instance.peticionario
+        cat.peticionario = peti
+        cat.save()
 
 @receiver(post_save, sender=LecturaDetalle)
 def letura_detalle_post_save_receiver(sender, instance, **kwargs):
 
     lectura_id = instance.lectura.id
     id_medidor = instance.catastro.medidor.id
+    id_catastro = instance.catastro.id
 
     enc = Lectura.objects.filter(pk=lectura_id).first()
     
@@ -244,6 +320,12 @@ def letura_detalle_post_save_receiver(sender, instance, **kwargs):
             lectura=lectura_id).aggregate(Sum('valor_excedente'))
         total_consumo_maximo = LecturaDetalle.objects.filter(
             lectura=lectura_id).aggregate(Sum('valor_consumo_maximo'))
+        total_administracion = LecturaDetalle.objects.filter(
+            lectura=lectura_id).aggregate(Sum('administracion'))
+        total_alcantarillado = LecturaDetalle.objects.filter(
+            lectura=lectura_id).aggregate(Sum('alcantarillado'))
+        total_derecho_conexion = LecturaDetalle.objects.filter(
+            lectura=lectura_id).aggregate(Sum('derecho_conexion'))
         total_general = LecturaDetalle.objects.filter(
             lectura=lectura_id).aggregate(Sum('total'))
 
@@ -252,6 +334,9 @@ def letura_detalle_post_save_receiver(sender, instance, **kwargs):
         enc.total_base_reserva = total_base_reserva['base_reserva__sum']
         enc.total_excedente = total_excedente['valor_excedente__sum']
         enc.total_consumo_maximo = total_consumo_maximo['valor_consumo_maximo__sum']
+        enc.total_administracion = total_administracion['administracion__sum']
+        enc.total_alcantarillado = total_alcantarillado['alcantarillado__sum']
+        enc.total_derecho_conexion = total_derecho_conexion['derecho_conexion__sum']
         enc.total_general = total_general['total__sum']
         enc.save()
 
@@ -260,6 +345,12 @@ def letura_detalle_post_save_receiver(sender, instance, **kwargs):
         li = int(instance.lectura_actual)
         med.lectura_inicial = li
         med.save()
+    
+    cat = Catastro.objects.filter(pk=id_catastro).first()
+    if cat:
+        cat.peticionario = 'ANT'
+        cat.save()
+
     
 #Signal Catastro ======================================================
 @receiver(post_save, sender=Catastro)

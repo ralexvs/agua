@@ -1,6 +1,6 @@
 from django import forms 
-from .models import Medidor, Barrio, Abonado, Medidor, Catastro, TipoLectura, Lectura, LecturaDetalle
-from apps.parametro.models import Pago, Servicio, Descuento
+from .models import Medidor, Barrio, Abonado, Medidor, Catastro, TipoLectura, Lectura, LecturaDetalle, MultaDetalle
+from apps.parametro.models import Pago, Servicio, Descuento, Multa
 
 class MedidorForm(forms.ModelForm):
     
@@ -78,11 +78,11 @@ class CatastroForm(forms.ModelForm):
     class Meta:
 
         model = Catastro
-        fields = ('numero', 'fecha', 'abonado', 'servicio',
-                  'pago', 'medidor', 'descuento', 'descripcion', 'suspender','estado')
+        fields = ('numero', 'abonado',  'estado', 'fecha', 'peticionario', 'servicio', 'suspender', 'pago',
+                   'medidor', 'descuento', 'descripcion',    'alcantarillado')
         #exclude = ('suspender',)
         
-        labels = {'estado':'Activo', 'suspender':'Suspender Servicio'}
+        labels = {'estado':'Activo',}
         widget = {'fecha': forms.TextInput}
 
 
@@ -91,7 +91,6 @@ class CatastroForm(forms.ModelForm):
         super(CatastroForm, self).__init__(*args, **kwargs)
 
         for field in iter(self.fields):
-
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
         self.fields['abonado'].empty_label = 'Seleccione abonado'
@@ -126,7 +125,8 @@ class LecturaForm(forms.ModelForm):
     class Meta:
         model = Lectura
         fields = ('periodo', 'descripcion', 'consumo_total',
-                  'total_base', 'total_base_reserva', 'total_excedente', 'total_consumo_maximo', 'total_general')
+                'total_base', 'total_base_reserva', 'total_excedente', 'total_consumo_maximo', 'total_administracion',
+                  'total_alcantarillado', 'total_derecho_conexion', 'total_general')
     
     def __init__(self, *args, **kwargs):
 
@@ -143,23 +143,25 @@ class LecturaForm(forms.ModelForm):
         self.fields['total_base_reserva'].widget.attrs['readonly'] = True
         self.fields['total_excedente'].widget.attrs['readonly'] = True
         self.fields['total_consumo_maximo'].widget.attrs['readonly'] = True
+        self.fields['total_administracion'].widget.attrs['readonly'] = True
+        self.fields['total_alcantarillado'].widget.attrs['readonly'] = True
+        self.fields['total_derecho_conexion'].widget.attrs['readonly'] = True
         self.fields['total_general'].widget.attrs['readonly'] = True
 
-""" class LectruaDetalleForm(forms.ModelForm):
+class MultaDetalleForm(forms.ModelForm):
+    
+    lectura = forms.ModelChoiceField(queryset=LecturaDetalle.objects.filter(estado=False).order_by('id'))
+    multa = forms.ModelChoiceField(queryset=Multa.objects.filter(estado=True).order_by('descripcion'))
     
     class Meta:
-        model = LecturaDetalle
-        fields = ('lectura','catastro','lectura_actual','tipo_lectura')
+        model = MultaDetalle
+        fields = ('lectura','multa','cantidad','valor','total')
         
     def __init__(self, *args, **kwargs):
-        super(LectruaDetalleForm, self).__init__(*args, **kwargs)
+        super(MultaDetalleForm, self).__init__(*args, **kwargs)
         
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({ 'class':'form-control'})
-    
-        self.fields['lectura'].widget.attrs['readonly'] = True
-        self.fields['catastro'].widget.attrs['readonly'] = True
+
 
     
-            
- """

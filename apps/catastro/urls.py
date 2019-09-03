@@ -6,7 +6,8 @@ from .views import (
     CatastroList, CatastroCreate, CatastroUpdate, CatastroDelete, catastro_inactivar, catastro_suspender_servicio, CatastroSuspendido,
     TipoLecturaList, TipoLecturaCreate, TipoLecturaUpdate, TipoLecturaDelete, tipolectura_inactivar,
     LecturaList,  LecturaDelete, lectura_inactivar, lectura, 
-    LecturaDetalleDelete, 
+    LecturaDetalleList, LecturaDetalleDelete,
+    MultaDetalleList, MultaDetalleCreate, MultaDetalleUpdate, MultaDetalleDelete, multa_detalle,
 )
 from .reporte import reporte_lecturas, reporte_lectura
 
@@ -66,4 +67,16 @@ urlpatterns = [
      path('lecturas/print_all', reporte_lecturas, name='lectura_print_all'),
      path('lecturas/<int:lectura_id>/imprimir', reporte_lectura, name='lectura_print_one'),
 
+     path('lecturasdetalle/', LecturaDetalleList.as_view(), name='lecturadetalle_list'),
+    
+
+    path('multadetalle/', MultaDetalleList.as_view(), name='multadetalle_list'),
+    path('multadetalle/create', MultaDetalleCreate.as_view(),
+         name='multadetalle_new'),
+    path('multadetalle/update/<int:pk>/',
+         MultaDetalleUpdate.as_view(), name='multadetalle_update'),
+    path('multadetalle/delete/<int:pk>/',
+         MultaDetalleDelete.as_view(), name='multadetalle_delete'),
+    path('multadetalle/multa/<int:lectura_id>/',
+         multa_detalle, name='multadetalle_create'),
 ]
