@@ -1,17 +1,48 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import View, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from apps.recaudacion.models import Recaudacion, RecaudacionDetalle
+from apps.catastro.models import Lectura, LecturaDetalle
+from apps.parametro.models import Entidad
 from django.db.models import Sum
+from django.http import JsonResponse
+import json as simplejson
+from random import randint
 import datetime
+from datetime import time, date
 from django.utils import timezone
 
-
 # Create your views here.
+
+def get_coords(request, *args, **kwargs):
+    template_name = 'core/charts.html'
+    datos = Lectura.objects.all()
+    voto = []
+    texto = []
+    color = []
+    i = 0
+    for item in datos:
+        texto.append(item.descripcion)
+        r = lambda: randint(0,255)
+        r = lambda: randint(0, 255)
+        color.append('#%02X%02X%02X' % (r(),r(),r()))
+        voto.append(item.consumo_total)
+        i +=1
+    pregunta = simplejson.dumps(texto)
+    voto = simplejson.dumps(voto)
+    color = simplejson.dumps(color)
+    context={
+        'pregunta':pregunta,
+        'voto': voto,
+        'color':color,
+        'datos':datos,
+        'i':i
+    }
+    return render(request, template_name, context)
 
 class SinPrivilegios(LoginRequiredMixin, PermissionRequiredMixin):
     login_url = 'login'
@@ -30,8 +61,29 @@ class SinPrivilegios(LoginRequiredMixin, PermissionRequiredMixin):
 def home(request):
     contexto = {}
     template_name = "core/home.html"
-    
+    entidad = Entidad.objects.all().first()
     recaudado = Recaudacion.objects.filter(estado=True)
+    deudores = LecturaDetalle.objects.filter(estado=True)
+
+    datos = Lectura.objects.all()
+    voto = []
+    texto = []
+    color = []
+    i = 0
+    for item in datos:
+        texto.append(item.descripcion)
+        r = lambda: randint(0, 255)
+        r = lambda: randint(0, 255)
+        color.append('#%02X%02X%02X' % (r(), r(), r()))
+        voto.append(item.consumo_total)
+        i += 1
+    pregunta = simplejson.dumps(texto)
+    voto = simplejson.dumps(voto)
+    color = simplejson.dumps(color)
+
+
+
+
     if recaudado:
         total_base = RecaudacionDetalle.objects.filter(
             estado=True).aggregate(Sum('base'))
@@ -67,7 +119,11 @@ def home(request):
 
         descuentos = descuentos['total_descuento__sum']
 
-        
+        if deudores:
+            total = LecturaDetalle.objects.filter(estado = True).aggregate(Sum('total'))
+        else:
+            total = 0
+    
         contexto = {'recaudado': recaudado, 
                     'alcantarillado': total_alcantarillado, 
                     'administracion':total_administracion,
@@ -76,15 +132,17 @@ def home(request):
                     'subtotal': subtotal,
                     'total_recaudado': total_recaudado,
                     'ahora':timezone.now(),
-
+                    'deudores':deudores,
+                    'total':total,
+                    'pregunta': pregunta,
+                    'voto': voto,
+                    'color': color,
+                    'datos': datos,
+                    'i': i,
+                    'entidad':entidad,
         }
     #queryset = RecaudacionDetalle.objects.filter(estado=True)
     return render(request, template_name,contexto)
-
-    
-
-    
-
 
 class HomeSinPrivilegios(LoginRequiredMixin, TemplateView):
     template_name = "core/sin_privilegio.html"
@@ -104,7 +162,7 @@ class VistaBaseCreate(SuccessMessageMixin, SinPrivilegios, CreateView):
 
 class VistaBaseUpdate(SuccessMessageMixin, SinPrivilegios, UpdateView ):
 
-    success_message = "Su registro, ha sido actualizado"
+    success_message = "Registro, ha sido actualizado"
 
     def form_valid(self, form):
 
@@ -114,4 +172,4 @@ class VistaBaseUpdate(SuccessMessageMixin, SinPrivilegios, UpdateView ):
 
 class VistaBaseDelete(SuccessMessageMixin, SinPrivilegios, DeleteView):
 
-    success_message = "Su registro, fue eliminado"
+    success_message = "Registro, fue eliminado"

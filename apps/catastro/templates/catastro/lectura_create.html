@@ -47,14 +47,15 @@ Lecturas
                                     {{form_enc.descripcion}}
                                 </div>
                                 <div class="input-group-sm">
-                                    <label class="col-form-label-sm text-muted">T. M3</label>{{form_enc.consumo_total}}
-                                    <label class="col-form-label-sm text-muted">T. Base</label>{{form_enc.total_base}}</li>
+                                    <label class="col-form-label-sm text-muted">M3</label>{{form_enc.consumo_total}}
+                                    <label class="col-form-label-sm text-muted">Base</label>{{form_enc.total_base}}</li>
                                     <label class="col-form-label-sm text-muted">Bas. reserva</label>{{form_enc.total_base_reserva}}</li>
                                     <label class="col-form-label-sm text-muted">Excedente</label>{{form_enc.total_excedente}}</li>
                                     <label class="col-form-label-sm text-muted">Consu. maximo</label>{{form_enc.total_consumo_maximo}}</li>
                                     <label class="col-form-label-sm text-muted">Administracion</label>{{form_enc.total_administracion}}</li>
                                     <label class="col-form-label-sm text-muted">Alcantarillado</label>{{form_enc.total_alcantarillado}}</li>
                                     <label class="col-form-label-sm text-muted">Derecho conexión</label>{{form_enc.total_derecho_conexion}}</li>
+                                    <label class="col-form-label-sm text-muted">Multas y Otros Valores</label>{{form_enc.total_otros}}</li>
                                     <label class="col-form-label-sm text-muted">TOTAL GENERAL</label>{{form_enc.total_general}}</li>
                                 </div>
                             </div>
@@ -215,8 +216,10 @@ Lecturas
                                                         </td>
                                                         <td>
                                                             <a href="{% url 'catastro:multadetalle_create' det.id %}">
-                                                                <button type="button" class="btn btn-warning btn-circle"><i class="far fa-hand-pointer"
-                                                                    ></i></button></a>
+                                                                <button type="button" class="btn btn-success btn-circle"><abbr title="Agregar Multas">
+                                                                    <i class="fas fa-fire-alt"></i></abbr>
+                                                                </button>
+                                                            </a>
                                 
                                                             <button
                                                                 onclick="return abrir_modal('{% url 'catastro:lecturadetalle_delete' encabezado.pk det.id %}')"
@@ -272,7 +275,7 @@ Lecturas
         $("#sidebarToggle").click();
 
         $('.table').DataTable({
-            "pageLength": 3,
+            "pageLength": 4,
             "pagingType": "full_numbers",
             language: {
 

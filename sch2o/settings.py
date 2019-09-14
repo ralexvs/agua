@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'apps.parametro',
     'apps.recaudacion',
     'import_export',
+    'chartjs',
 ]
 
 MIDDLEWARE = [

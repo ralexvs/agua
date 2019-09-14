@@ -65,7 +65,6 @@ class Servicio(ClaseModelo):
 
     def save(self):
 
-        self.descripcion = self.descripcion.upper()
         self.derecho_conexion_nuevo_comunidad = float(
             self.derecho_conexion) * 2
         # Invoco al metodo save() del padre
@@ -113,11 +112,6 @@ class Multa(ClaseModelo):
 
         return self.descripcion + " | $ " + str(self.valor)
 
-    def save(self):
-    
-        self.descripcion = self.descripcion.upper()
-        # Invoco al metodo save() del padre
-        super(Multa, self).save()
 
 
 class Descuento(ClaseModelo):
@@ -135,12 +129,7 @@ class Descuento(ClaseModelo):
     
         return self.descripcion + " | $ " + str(self.valor)
 
-    def save(self):
     
-        self.descripcion = self.descripcion.upper()
-        # Invoco al metodo save() del padre
-        super(Descuento, self).save()
-
 
 class Pago(ClaseModelo):
 
@@ -156,11 +145,4 @@ class Pago(ClaseModelo):
 
         return '{}'.format(self.descripcion)
 
-    def save(self):
-
-        self.descripcion = self.descripcion.upper()
-        # Invoco al metodo save() del padre
-        super(Pago, self).save()
-
-
-
+    

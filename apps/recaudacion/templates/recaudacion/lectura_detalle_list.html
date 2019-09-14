@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    lecturas
+    Deudores
 {% endblock title %}
 
 {% block breadcrumb_item %}
@@ -27,19 +27,18 @@
 <div class="card mb-3">
         <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover table-bordered">
+            <table class="display">
             
-                <thead class="table-info">
+                <thead class="">
                     <tr>
                         <th class="text-muted">Lectura</th>
                         <th class="text-muted">Catastro</th>
+                        <th class="text-muted">Medidor</th>
                         <th class="text-muted">L. Ant.</th>
                         <th class="text-muted">L. Act.</th>
-                        <th   class="text-muted">M3</th>
-                        <th class="text-muted ">Total</th>
-                        <th class="text-muted">Lectura</th>
-                        <th class="text-muted">Recaudción</th>
-                        <th class="text-muted">Cobrar</th>
+                        <th class="text-muted">M3</th>
+                        <th class="text-muted  ">Total</th>
+                        <th class="text-muted">General</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,22 +46,27 @@
                     <tr>
                         <td>{{det.lectura}}</td>
                         <td>{{det.catastro}}</td>
-                        <td>{{det.lectura_anterior}}</td>
-                        <td>{{det.lectura_actual}}</td>
-                        <td>{{det.consumo}}</td>
-                        <td class="table-success">{{det.total}}</td>
-                        <td>{{det.tipo_lectura}}</td>
-                        <td>{{det.estado|yesno:'Adeuda,Pagado'}}
-                        </td>
-                        <td>
-                            <a href="{% url 'recaudacion:recaudacion_create' det.catastro.id %}"> <button
-                                class="btn " role="button"><abbr title="Recaudar"><i
-                                        class="text-success fas fa-cash-register"></i></abbr></button>
-                            </a>
-                        </td>
+                        <td>{{det.catastro.medidor}}</td>
+                        <td class="text-center">{{det.lectura_anterior}}</td>
+                        <td class="text-center">{{det.lectura_actual}}</td>
+                        <td class="text-center">{{det.consumo}}</td>
+                        <td class="table-success text-right">{{det.total}}</td>
+                        <td></td>
                     </tr>
                     {% endfor%}
                 </tbody>
+                <tfoot>
+                <tr>
+                     <th class="text-muted"></th>
+                        <th class="text-muted"></th>
+                        <th class="text-muted"></th>
+                        <th class="text-muted"></th>
+                        <th class="text-muted"></th>
+                        <th class="text-muted"></th>
+                        <th class="text-muted text-right"></th>
+                        <th class="text-muted text-right">T. General</th>
+                </tr>
+                </tfoot>
             </table>
         </div>
     </div>
@@ -71,5 +75,88 @@
 
 
 {% endblock content %}
+{% block js_pages %}
+<script>
+    $(document).ready(function() {
+    $("#sidebarToggle").click();
 
+    $('table.display').DataTable( {
+         dom: 'Bfrtip',
+        buttons: [
+            { extend: 'copyHtml5', footer: true },
+            { extend: 'excelHtml5',
+            footer: true,
+            title: '{{entidad.descripcion}}',
+             messageTop: 'LISTA DE DEUDORES',
+             },
+            { extend: 'csvHtml5', footer: true,title: '{{entidad.descripcion}}', messageTop: 'LISTA DE DEUDORES' },
+            { extend: 'pdfHtml5', footer: true,title: '{{entidad.descripcion}}', messageTop: 'LISTA DE DEUDORES', }
+        ],
+        "pagingType": "full_numbers",
+        language: {
+          "sProcessing": "Procesando...",
+          "sLengthMenu": "Mostrar _MENU_ registros",
+          "sZeroRecords": "No se encontraron resultados",
+          "sEmptyTable": "Ningún dato disponible en esta tabla",
+          "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+          "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+          "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+          "sInfoPostFix": "",
+          "sSearch": "Buscar:",
+          "sUrl": "",
+          "sInfoThousands": ",",
+          "sLoadingRecords": "Cargando...",
+          "oPaginate": {
+            "sFirst": "<i class= 'fas fa-angle-double-left'></i>",
+            "sLast": "<i class= 'fas fa-angle-double-right'></i>",
+            "sNext": "<i class= 'fas fa-angle-right'></i>",
+            "sPrevious": "<i class= 'fas fa-angle-left'></i>",
+          },
+          "oAria": {
+            "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+          }
+        },
 
+        "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+
+            // Total over all pages
+            total = api
+                .column( 6 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            // Total over this page
+            pageTotal = api
+                .column( 6, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            // Update footer
+            $( api.column( 5 ).footer() ).html(
+                'Total'
+            );
+            $( api.column( 6 ).footer() ).html(
+                '$'+pageTotal
+            );
+            $( api.column( 7 ).footer() ).html(
+                '$'+ total
+            );
+        }
+    } );
+} );
+</script>
+{% endblock js_pages %}

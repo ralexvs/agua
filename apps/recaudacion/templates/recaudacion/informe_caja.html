@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Informe de caja
+{% endblock title %}
+
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
+    <a href="{% url 'recaudacion:informe_caja_pdf' %}" role="button"> PDF</a>
+</li>
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if object_list %}Lista{% else %}No existen datos {% endif%}</li>
+{% endblock breadcrumb_item %}
+
+{% block title_pages %}
+    Informes de caja
+{% endblock title_pages %}
+
+    
+{% block content %}
+
+<div class="card mb-3">
+        <div class="card-body">
+        <div class="table-responsive">
+
+            <form action="." method="get">
+                <label for="q">Fecha Inicial: </label>
+                <input type="text" name="fecha_inicial" id="id_fecha_inicial" value="{{fecha_inicial}}" readonly >
+                <label for="q">Fecha final: </label>
+                <input type="text" name="fecha_final" id="id_fecha_final" value="{{fecha_final}}" readonly >
+                <input type="submit" value="Consultar">
+            </form>
+            
+             <table class="display">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Fecha</th>
+                        <th>Abonado</th>
+                        <th>Ley especial</th>
+                        <th>Pago</th>
+                        <th>Subtotal</th>
+                        <th>Descuento</th>
+                        <th>Total</th>
+                        <th>General</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {%for item in results %}
+                    <tr>
+                        <td>{{item.id}}</td>
+                        <td>{{item.fecha|date:'d/b/Y'}}</td>
+                        <td>{{item.abonado}}</td>
+                        <td>{{item.descuento}}</td>
+                        <td >{{item.pago}}</td>
+                        <td class=" text-right">{{item.subtotal}}</td>
+                        <td class=" text-right">{{item.total_descuento}}</td>
+                        <td class=" text-right">{{item.total_general}}</td>
+                        <th></th>
+                    </tr>
+                {% endfor%}
+                </tbody>
+                 <tfoot>
+                 <tr>
+                     <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="text-right">
+                                    <span class="badge badge-primary ">Totales<span
+                                            class="spinner-grow spinner-grow-sm text-light spinner-border-md" role="status"
+                                            aria-hidden="true">
+                                            <span class="text-dark">$</span></span>
+                                    </span>
+                                </th>
+                        <th class="bg-dark text-light text-right"></th>
+                        <th class="bg-dark text-light text-right"></th>
+                        <th class="bg-dark text-light text-right"></th>
+                        <th class="bg-dark text-light text-right"></th>
+                 </tr>
+                 </tfoot>
+            </table>
+                
+        </div>
+    </div>
+    <div class="card-footer small text-muted">Actualizado a las {{today}}</div>
+</div>
+
+
+{% endblock content %}
+
+
+{% block fecha %}
+
+<script>
+    $(document).ready(function () {
+        $("#id_fecha_inicial, #id_fecha_final").datetimepicker({
+            format: 'Y-m-d',
+            timepicker: false
+        });
+    });
+</script>
+{% endblock fecha %}
+
+{% block js_pages %}
+<script>
+    $(document).ready(function() {
+    $("#sidebarToggle").click();
+
+    $('table.display').DataTable( {
+         dom: 'Bfrtip',
+        buttons: [
+            { extend: 'copyHtml5', footer: true },
+            { extend: 'excelHtml5',
+            footer: true,
+            title: '{{entidad.descripcion}}',
+             messageTop: 'INFORME DE CAJA {{fecha_inicial}} AL {{fecha_final}}'
+             },
+            { extend: 'csvHtml5', footer: true,title: '{{entidad.descripcion}}', messageTop: 'INFORME DE CAJA {{fecha_inicial}} AL {{fecha_final}}'},
+            { extend: 'pdfHtml5', footer: true,title: '{{entidad.descripcion}}', messageTop: 'INFORME DE CAJA {{fecha_inicial}} AL {{fecha_final}}'}
+        ],
+        "pagingType": "full_numbers",
+        language: {
+          "sProcessing": "Procesando...",
+          "sLengthMenu": "Mostrar _MENU_ registros",
+          "sZeroRecords": "No se encontraron resultados",
+          "sEmptyTable": "Ningún dato disponible en esta tabla",
+          "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+          "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+          "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+          "sInfoPostFix": "",
+          "sSearch": "Buscar:",
+          "sUrl": "",
+          "sInfoThousands": ",",
+          "sLoadingRecords": "Cargando...",
+          "oPaginate": {
+            "sFirst": "<i class= 'fas fa-angle-double-left'></i>",
+            "sLast": "<i class= 'fas fa-angle-double-right'></i>",
+            "sNext": "<i class= 'fas fa-angle-right'></i>",
+            "sPrevious": "<i class= 'fas fa-angle-left'></i>",
+          },
+          "oAria": {
+            "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+          }
+        },
+
+        "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+
+            // Total over all pages
+            total = api
+                .column( 7 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            // Total over this page
+            pageSubtotal = api
+                .column( 5, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            pageDescuento = api
+                .column( 6, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            pageTotal = api
+                .column( 7, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            // Update footer
+            $( api.column( 4 ).footer() ).html(
+                'Total'
+            );
+
+            $( api.column( 5 ).footer() ).html(
+                '$'+pageSubtotal
+            );
+
+            $( api.column( 6 ).footer() ).html(
+                '$'+pageDescuento
+            );
+
+            $( api.column( 7 ).footer() ).html(
+                '$'+pageTotal
+            );
+
+            $( api.column( 8 ).footer() ).html(
+                '$'+ total
+            );
+        }
+    } );
+} );
+</script>
+{% endblock js_pages %}

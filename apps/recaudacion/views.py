@@ -7,13 +7,39 @@ from django.contrib.auth.decorators import login_required, permission_required
 import datetime
 from django.db.models.functions import Round
 from django.http import HttpResponse
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from .forms import RecaudacionForm, RecaudacionDetalleForm
-from .models import Recaudacion, RecaudacionDetalle
-from apps.catastro.models import Abonado, Catastro, LecturaDetalle
-
+from .models import Recaudacion, RecaudacionDetalle, RecaudacionMultaDetalle
+from apps.catastro.models import Abonado, Catastro,Lectura, LecturaDetalle, MultaDetalle
+from apps.parametro.models import Multa, Entidad
 from django.utils import  timezone
+
+
 # Create your views here.
+
+def informe_caja(request):
+    today = timezone.now()
+    fecha_inicial = request.GET.get('fecha_inicial')
+    fecha_final = request.GET.get('fecha_final')
+    template_name = 'recaudacion/informe_caja.html'
+    entidad = Entidad.objects.all().first()
+    results = Recaudacion.objects.filter(fecha__range=(fecha_inicial, fecha_final)).distinct()
+    subtotal = Recaudacion.objects.filter(fecha__range=(fecha_inicial, fecha_final)).distinct().aggregate(Sum('subtotal'))
+    total_descuento = Recaudacion.objects.filter(fecha__range=(fecha_inicial, fecha_final)).distinct().aggregate(
+        Sum('total_descuento'))
+    total_general = Recaudacion.objects.filter(fecha__range=(fecha_inicial, fecha_final)).distinct().aggregate(
+        Sum('total_general'))
+    return render(request, template_name,
+                  {'results': results,
+                   'today': today,
+                   'fecha_inicial':fecha_inicial,
+                   'fecha_final':fecha_final,
+                   'subtotal':subtotal,
+                   'total_descuento': total_descuento,
+                   'total_general':total_general,
+                   'entidad':entidad,
+
+                   })
 
 
 class RecaudacionList(SinPrivilegios,ListView):
@@ -33,6 +59,7 @@ class LecturaDetalleList(SinPrivilegios, ListView):
         context = super(LecturaDetalleList,self).get_context_data(**kwargs)
         #context.update({'ahora':self.ahora}) #tambien funciona
         context['ahora'] = timezone.now()
+        context['entidad'] = Entidad.objects.all().first()
         return context
 
 
@@ -43,8 +70,7 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
 
     template_name = 'recaudacion/recaudacion_create.html'
     cat = Catastro.objects.filter(estado=True, suspender=False, pk=catastro_id).first()
-    #ahora = timezone.now()
-    ahora = datetime.date.isoformat(timezone.now())
+    today = timezone.now()
     #tipo_lectura = TipoLectura.objects.filter(estado=True)
     form_recaudacion = {}
     contexto = {}
@@ -56,6 +82,7 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
     total_administracion = 0
     total_alcantarillado=0
     total_derecho_conexion = 0
+    total_otros = 0
     descuento = 0
     subtotal = 0
     total_descuento = 0
@@ -69,9 +96,12 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
         
         det = None
 
-        lectura_detalle = LecturaDetalle.objects.filter(
-            estado=True, catastro=catastro_id)
+        lectura_detalle = LecturaDetalle.objects.filter(estado=True, catastro=catastro_id)
+        #lect = LecturaDetalle.objects.filter(catastro=catastro_id)
+        #multas = MultaDetalle.objects.filter(lectura__id__in=lect)
+        multas = MultaDetalle.objects.filter(catastro=catastro_id, estado = True)
         
+
         total_consumo = LecturaDetalle.objects.filter(
             catastro=catastro_id,estado=True).aggregate(Sum('consumo'))
         total_base = LecturaDetalle.objects.filter(
@@ -88,6 +118,8 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
             catastro=catastro_id, estado=True).aggregate(Sum('alcantarillado'))
         total_derecho_conexion = LecturaDetalle.objects.filter(
             catastro=catastro_id, estado=True).aggregate(Sum('derecho_conexion'))
+        total_otros = MultaDetalle.objects.filter(
+            catastro=catastro_id, estado=True).aggregate(Sum('total'))
         total_general = LecturaDetalle.objects.filter(
             catastro=catastro_id, estado=True).aggregate(Sum('total'))
 
@@ -99,22 +131,23 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
         total_administracion = total_administracion['administracion__sum']
         total_alcantarillado = total_alcantarillado['alcantarillado__sum']
         total_derecho_conexion = total_derecho_conexion['derecho_conexion__sum']
-        subtotal = total_base + total_base_reserva+total_excedente + \
-            total_consumo_maximo + total_administracion + \
-            total_alcantarillado+total_derecho_conexion
+        total_otros = total_otros['total__sum']
+        if total_otros == None:
+            total_otros = 0
+        subtotal = total_base + total_base_reserva + total_excedente + total_consumo_maximo + total_administracion + total_alcantarillado + total_derecho_conexion + total_otros
         valor = cat.descuento.valor
         if valor > 0:
             total_descuento = (subtotal * valor)/100
         
         
-        total_general = total_general['total__sum'] - round(total_descuento, 2)
+        total_general = (total_general['total__sum']+total_otros) - round(total_descuento, 2)
 
         contexto = {'catastro': cat,
             'encabezado': enc,
             'detalle': det,
             'form_enc': form_recaudacion, 
             'lectura_detalle': lectura_detalle, 
-            'ahora': ahora,
+            'today': today,
                     'total_consumo': total_consumo,
                     'total_base': total_base,
                     'total_base_reserva': total_base_reserva,
@@ -123,9 +156,11 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
                     'total_administracion' : total_administracion,
                     'total_alcantarillado' : total_alcantarillado,
                     'total_derecho_conexion' : total_derecho_conexion,
+                    'total_otros': total_otros,
                     'subtotal': subtotal,
                     'total_descuento': round(total_descuento, 2),
                     'total_general': total_general,
+            'multas': multas,
         }
     if request.method == 'POST':
         
@@ -150,7 +185,7 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
             catastro=catastro_id, estado=True).aggregate(Sum('alcantarillado'))
         total_derecho_conexion = LecturaDetalle.objects.filter(
             catastro=catastro_id, estado=True).aggregate(Sum('derecho_conexion'))
-        total_general = LecturaDetalle.objects.filter(
+        total_otros = MultaDetalle.objects.filter(
             catastro=catastro_id, estado=True).aggregate(Sum('total'))
 
         total_consumo = total_consumo['consumo__sum']
@@ -161,14 +196,17 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
         total_administracion = total_administracion['administracion__sum']
         total_alcantarillado = total_alcantarillado['alcantarillado__sum']
         total_derecho_conexion = total_derecho_conexion['derecho_conexion__sum']
-        subtotal = total_base + total_base_reserva+total_excedente+total_consumo_maximo + total_administracion + total_alcantarillado+total_derecho_conexion
+        total_otros = total_otros['total__sum']
+        if total_otros ==None:
+           total_otros = 0 
+        subtotal = total_base + total_base_reserva+total_excedente+total_consumo_maximo + total_administracion + total_alcantarillado+total_derecho_conexion+total_otros
         valor = cat.descuento.valor
         if valor > 0:
             total_descuento = (subtotal * valor)/100
 
-
         #si no se envia recaudacion_id quiere decir que el encabezado no existe
         if not recaudacion_id:
+            
             #prov = Proveedor.objects.get(pk=proveedor)
             enc = Recaudacion(
                 fecha=fecha,
@@ -184,6 +222,7 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
                 total_administracion = total_administracion,
                 total_alcantarillado = total_alcantarillado,
                 total_derecho_conexion = total_derecho_conexion,
+                total_otros = total_otros,
                 #subtotal = subtotal,
                 total_descuento = total_descuento,
                 #total_general=total_general,
@@ -196,11 +235,12 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
         #return redirect('recaudacion:recaudacion_detalle_list')
         detalle = LecturaDetalle.objects.filter(estado=True, catastro=catastro_id)
         enc = Recaudacion.objects.filter(pk=recaudacion_id).first()
+        
         for deta in detalle:
             det = RecaudacionDetalle(
                 recaudacion=enc,
-                lectura=deta,
-                numero=deta.catastro.numero,
+                lectura_detalle=deta,
+                catastro=deta.catastro.id,
                 lectura_anterior=deta.lectura_anterior,
                 lectura_actual=deta.lectura_actual,
                 consumo=deta.consumo,
@@ -215,11 +255,36 @@ def recaudacion(request, recaudacion_id=None, catastro_id=None):
             )
             if det:
                 det.save()
-            
+                lectura_detalle_id = det.lectura_detalle
+                
+                multa_detalle = MultaDetalle.objects.filter(catastro=catastro_id, estado=True, )
+                print("IMPRIMIENDO ID", lectura_detalle_id)
+                recaudacion_detalle = RecaudacionDetalle.objects.filter(recaudacion=recaudacion_id, lectura_detalle=lectura_detalle_id)
+                for rd in recaudacion_detalle:
+                    for md in multa_detalle:
+                        if rd.lectura_detalle == md.lectura_detalle:
+                            print("Catastro RecaudacionDetalle",rd.catastro,"Catastro Mulkta", md.catastro)
+                            recaudacion_det = RecaudacionDetalle.objects.filter(
+                                recaudacion=recaudacion_id, lectura_detalle=lectura_detalle_id).first()
+                            multad = MultaDetalle.objects.filter(pk = md.id).first()
+                            multa = Multa.objects.filter(pk=md.multa.id).first()
+                            rmd = RecaudacionMultaDetalle(
+                                catastro=int(catastro_id),
+                                lectura=int(md.lectura),
+                                cantidad=int(md.cantidad),
+                                valor=float(md.valor),
+                                multa = multa,
+                                multa_detalle=multad,
+                                recaudacion =rd.recaudacion.id,
+                                recaudacion_detalle=recaudacion_det,
+                                uc=request.user,
+                                )
+                            if rmd:
+                                rmd.save()
+
         return redirect('recaudacion:lectura_detalle_list')
 
     return render(request, template_name, contexto)
-
 
 class RecaudacionCreate(VistaBaseCreate, SinPrivilegios):
     permission_required = 'recaudacion.add_recaudacion'

@@ -8,9 +8,9 @@ Lecturas
 <li class="breadcrumb-item"><i class="far fa fa-list "></i>
     <a href="{% url 'recaudacion:lectura_detalle_list' %}" role=" button"> Lista</a>
 </li>
-<li class="breadcrumb-item"><i class="far fa fa-save "></i>
+<!-- <li class="breadcrumb-item"><i class="far fa fa-save "></i>
     <a href="#" role=" button"> Guardar</a>
-</li>
+</li> -->
 <li class="breadcrumb-item"><i class="far fa fa-undo text-danger"></i>
     <a href="{{request.META.HTTP_REFERER}}" role=" button"> Cancelar</a>
 </li>
@@ -23,7 +23,8 @@ Lecturas
 <li class="breadcrumb-item active"><i class="far fa fa-edit"></i><span class="text-warning"> Editar</span></li>
 
 {% else %}
-<li class="breadcrumb-item active"><i class="far fa fa-file-alt"></i> <span class="text-success"> Nuevo cobro</span></li>
+<li class="breadcrumb-item active"><i class="far fa fa-file-alt"></i> <span class="text-success"> Nueva recaudacón</span>
+</li>
 {%endif%}
 {% endblock breadcrumb_item %}
 
@@ -38,10 +39,10 @@ Lecturas
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-muted text-uppercase mb-1">
-                            {% if encabezado %}Editar{% else %}Nueva{% endif %} Recaudación
+                        <!--<div class="text-xs font-weight-bold text-muted text-uppercase mb-1">
+                             {% if encabezado %}Editar{% else %}Nueva{% endif %} Recaudación 
                         </div>
-                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-divider"></div> -->
                         <div class="row">
                             <!-- Inicio cabecera izquierda-->
                             <div class="col-8">
@@ -49,29 +50,24 @@ Lecturas
                                     <div class="input-group-prepend">
                                         <!--Inicio encabezado-->
                                         <label class="input-group-text" for="id_fecha">Fecha:</label>
-                                        <input class="form-control" type="text" id="id_fecha" name="fecha" value="{{ahora}}" readonly>
+                                        <input class="form-control" type="text" id="id_fecha" name="fecha"
+                                            value="{{today|date:'Y-m-d'}}" readonly>
                                         <label class="input-group-text ml-2" for="id_descuento">Descuento:</label>
-                                        <input type="text" id="id_descuento" name="descuento" class="form-control" value="{{catastro.descuento}}" readonly>
+                                        <input type="text" id="id_descuento" name="descuento" class="form-control"
+                                            value="{{catastro.descuento}}" readonly>
                                     </div>
                                 </div>
                                 <div class="input-group mb-1">
                                     <div class="input-group-prepend">
                                         <label class="input-group-text" for="id_pago">Pago:</label>
-                                        <input type="text" id="id_pago" name="pago" class="form-control" value="{{catastro.pago.descripcion}}" readonly>
-                                        <input type="text" id="id_total_consumo" name="total_consumo" class="form-control text-right ml-2"
-                                                value="{{total_consumo}} m3"readonly style="width: 15%">
-                                        <!--Opciones-->
-                                        <!--Botones-->
-                                        <button type="submit" class="btn btn-success ml-1 mr-1"><i
-                                                class="fas fa-money-bill-wave-alt "></i>
-                                            Recaudar</button>
+                                        <input type="text" id="id_pago" name="pago" class="form-control"
+                                            value="{{catastro.pago.descripcion}}" readonly>
+                                        <input type="text" id="id_total_consumo" name="total_consumo"
+                                            class="form-control text-right ml-2" value="{{total_consumo}} m3" readonly
+                                            style="width: 15%">
 
-                                        <a href="{% url 'recaudacion:recaudacion_list' %}"
-                                            class="btn btn-secondary ml-1 mr-1 "><i class="far fa-hand-point-left"></i>
-                                            Cancelar</a>
-                                        <!--Fin botones-->
-                                    
-                                        
+
+
                                     </div>
                                 </div>
 
@@ -100,7 +96,7 @@ Lecturas
                                                     <tbody>
                                                         {%for det in lectura_detalle %}
                                                         <tr>
-                                                            <td>{{det.lectura}}</td>
+                                                            <td>{{det.lectura_detalle}}</td>
                                                             <td>{{det.catastro}}</td>
                                                             <td>{{det.lectura_anterior}}</td>
                                                             <td>{{det.lectura_actual}}</td>
@@ -114,8 +110,39 @@ Lecturas
                                                 </table>
                                             </div>
                                         </div>
-                                        <div class="card-footer small text-muted">Actualizado: {{ahora}}</div>
+
                                     </div>
+                                </div>
+                                <div class="col-12">
+                                    <!-- DataTables Example -->
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class=" table">
+                                                    <thead class="bg-success">
+                                                        <tr>
+                                                            <th class="text-light">Multa y otros valores</th>
+                                                            <th class="text-light">Cantidad</th>
+                                                            <th class="text-light">Valor</th>
+                                                            <th class="text-light">Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {%for mt in multas %}
+                                                        <tr>
+                                                            <td>{{mt.multa.descripcion}}</td>
+                                                            <td class="text-center">{{mt.cantidad}}</td>
+                                                            <td class="text-right">{{mt.valor}}</td>
+                                                            <td class="text-right">{{mt.total}}</td>
+                                                        </tr>
+                                                        {% endfor%}
+                                                    </tbody>
+                                                </table>
+                                                <div class="card-footer small text-muted">Actualizado: {{today}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -123,142 +150,173 @@ Lecturas
                             <!--Inicio totales-->
                             <div class="col-4">
                                 <div class="row">
-                                <!-- Inicio totales -->
-                                <div class="col-4">
-                                    
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">T.
-                                                Base</label>
+                                    <!-- Inicio totales -->
+                                    <div class="col-4">
+
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">T.
+                                                    Base</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">Bas.
+                                                    reserva</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">Excedente</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">Cons.
+                                                    maximo</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">Administración</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">Alcantarillado</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">Derecho conexión</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">Multas y otros</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">Subtotal</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">Total
+                                                    descuento</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text text-muted">TOTAL
+                                                    GENERAL</label>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">Bas.
-                                                reserva</label>
+                                    <div class="col-4">
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_base" name="total_base"
+                                                    class="form-control text-right" value="{{total_base}}" readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">Excedente</label>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_base_reserva" name="total_base_reserva"
+                                                    class="form-control text-right" value="{{total_base_reserva}}"
+                                                    readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">Cons.
-                                                maximo</label>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_excedente" name="total_excedente"
+                                                    class="form-control text-right" value="{{total_excedente}}"
+                                                    readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">Administración</label>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_consumo_maximo"
+                                                    name="total_consumo_maximo" class="form-control text-right"
+                                                    value="{{total_consumo_maximo}}" readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">Alcantarillado</label>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_administracion"
+                                                    name="total_administracion" class="form-control text-right  "
+                                                    value="{{total_administracion}}" readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">Derecho conexión</label>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_alcantarillado"
+                                                    name="total_alcantarillado" class="form-control text-right "
+                                                    value="{{total_alcantarillado}}" readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">Subtotal</label>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_derecho_conexion"
+                                                    name="total_derecho_conexion" class="form-control text-right"
+                                                    value="{{total_derecho_conexion}}" readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">Total
-                                                descuento</label>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_subtotal" name="total_subtotal"
+                                                    class="form-control text-right text-danger " value="{{total_otros}}"
+                                                    readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text text-muted">TOTAL
-                                                GENERAL</label>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_subtotal" name="total_subtotal"
+                                                    class="form-control text-right text-success " value="{{subtotal}}"
+                                                    readonly>
+                                            </div>
                                         </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_descuento" name="total_descuento"
+                                                    class="form-control text-right" value="{{total_descuento}}"
+                                                    readonly>
+                                            </div>
+                                        </div>
+                                        <div class="input-group ">
+                                            <div class="input-group-prepend">
+                                                <input type="text" id="id_total_general" name="total_general"
+                                                    class="form-control text-right bg-dark text-success"
+                                                    value="{{total_general}}" readonly>
+                                            </div>
+                                        </div>
+                                        <!--fin totales-->
+
                                     </div>
+                                    <!-- Fin totales -->
 
                                 </div>
-                                
-                                <div class="col-4">
-                                    
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_base" name="total_base" class="form-control text-right" 
-                                            value="{{total_base}}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_base_reserva" name="total_base_reserva" class="form-control text-right"
-                                            value="{{total_base_reserva}}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_excedente" name="total_excedente" class="form-control text-right"
-                                            value="{{total_excedente}}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_consumo_maximo" name="total_consumo_maximo" class="form-control text-right"
-                                            value="{{total_consumo_maximo}}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_administracion" name="total_administracion" class="form-control text-right  "
-                                                value="{{total_administracion}}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_alcantarillado" name="total_alcantarillado" class="form-control text-right "
-                                                value="{{total_alcantarillado}}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_derecho_conexion" name="total_derecho_conexion" class="form-control text-right"
-                                                value="{{total_derecho_conexion}}" readonly>
-                                        </div>
-                                    </div>
+<!--Opciones-->
+<!--Botones-->
+<button type="submit" class="btn btn-success  mt-2 btn-block"><i class="fas fa-money-bill-wave-alt "></i>
+    Recaudar</button>
 
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_subtotal" name="total_subtotal" class="form-control text-right text-success "
-                                            value="{{subtotal}}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_descuento" name="total_descuento" class="form-control text-right"
-                                            value="{{total_descuento}}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="input-group ">
-                                        <div class="input-group-prepend">
-                                            <input type="text" id="id_total_general" name="total_general" class="form-control text-right bg-dark text-success"
-                                            value="{{total_general}}" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Fin totales -->
+<a href="{{request.META.HTTP_REFERER}}" class="btn btn-secondary  mt-2 btn-block"><i
+        class="far fa-hand-point-left"></i>
+    Cancelar</a>
+<!--Fin botones-->
 
                             </div>
-                            <!--fin totales-->
-                        </div>
+
+                               
+
+
+
                         </div>
                         <!--Fin fila cabecera-->
                     </div>
-
-
                 </div>
             </div>
         </div>

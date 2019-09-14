@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock title %}
+
+{% block breadcrumb_item %}
+{% endblock breadcrumb_item %}
+
+{% block title_pages %}
+
+{% endblock title_pages %}
+
+{% block content %}
+<div class="card mb-3">
+          <div class="card-header">
+            <i class="fas fa-chart-area"></i>
+            Area Chart Example</div>
+          <div class="card-body">
+            <canvas id="myChart" width="100%" height="30"></canvas>
+          </div>
+          <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+        </div>
+{% endblock content %}
+
+  {% block varios %}
+<script>
+    var dat = {{voto|safe}};
+    var col = {{color|safe}};
+    var preg = {{pregunta|safe}};
+    var i = {{i|safe}};
+    var pieDate = [];
+    var k = 0;
+    for (var j = 0; j < i; j++){
+        pieDate[j]={value:dat[j], color:col[j], highlight:"#0c62ab", label:preg[j]};
+    }
+   var ctx = document.getElementById('myChart').getContext('2d');
+   var myChart = new Chart(ctx, {
+       type: 'line',
+    data: {
+        labels: preg,
+        datasets: [{
+            label: 'M3 consumidos',
+            data: dat,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+</script>
+  {% endblock varios %}

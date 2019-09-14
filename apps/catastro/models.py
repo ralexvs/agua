@@ -14,8 +14,9 @@ from apps.parametro.models import Servicio, Pago, Descuento, Multa, Tarifa
 class Medidor(ClaseModelo):
     
     numero = models.CharField(verbose_name="Número medidor", max_length=50, unique=True)
-    descripcion = models.CharField(verbose_name="Descripcion", max_length=254)
-    modelo = models.CharField(verbose_name="Modelo", max_length=30)
+    descripcion = models.CharField(verbose_name="Descripcion", max_length=254, null=True, blank=True)
+    modelo = models.CharField(verbose_name="Modelo",
+                              max_length=30, null=True, blank=True)
     lectura_inicial = models.IntegerField("lectura inicial", default=0)
     asignar = models.BooleanField("Asignar", default=False)
     
@@ -25,10 +26,6 @@ class Medidor(ClaseModelo):
     def __str__(self):
         return '{}'.format(str(self.numero))
 
-    def save(self):
-        self.descripcion = self.descripcion.upper()
-        # Invoco al metodo save() del padre
-        super(Medidor, self).save()
 
 
 class Barrio(ClaseModelo):
@@ -41,11 +38,6 @@ class Barrio(ClaseModelo):
 
     def __str__(self):
         return '{}'.format(self.descripcion)
-
-    def save(self):
-        self.descripcion = self.descripcion.upper()
-        # Invoco al metodo save() del padre
-        super(Barrio, self).save()
 
 
 class Abonado(ClaseModelo):
@@ -117,7 +109,7 @@ class Catastro(ClaseModelo):
 
         verbose_name = "Planilla catastral"
         verbose_name_plural = "Planillas Catastrales"
-        ordering = ['id']
+        ordering = ['-numero']
         
         
     def __str__(self):
@@ -155,22 +147,25 @@ class Lectura(ClaseModelo):
 
     periodo = models.DateField("Período consumo", unique=True)
     descripcion = models.CharField("Descripción", max_length=150)
-    consumo_total = models.PositiveIntegerField("Consumo M3", null=True, blank=True )
+    consumo_total = models.PositiveIntegerField("Consumo M3", default=0)
     total_base = models.DecimalField(
-        "Tarifa base", max_digits=10, decimal_places=2, null=True, blank=True)
+        "Tarifa base", max_digits=10, decimal_places=2, default=0)
     total_base_reserva = models.DecimalField(
-        "Tarifa base reserva", max_digits=10, decimal_places=2, null=True, blank=True)
-    total_excedente = models.DecimalField("Total excedente", max_digits=10, decimal_places=2, null=True, blank=True)
+        "Tarifa base reserva", max_digits=10, decimal_places=2, default=0)
+    total_excedente = models.DecimalField(
+        "Total excedente", max_digits=10, decimal_places=2, default=0)
     total_consumo_maximo = models.DecimalField(
-        "Total consumo máximo", max_digits=10, decimal_places=2, null=True, blank=True)
+        "Total consumo máximo", max_digits=10, decimal_places=2, default=0)
     total_administracion = models.DecimalField(
         "Administración", max_digits=10, decimal_places=2, default=0)
     total_alcantarillado = models.DecimalField(
         "Alcantarillado", max_digits=10, decimal_places=2, default=0)
     total_derecho_conexion = models.DecimalField(
         "Total derecho conexion", max_digits=10, decimal_places=2, default=0)
+    total_otros = models.DecimalField(
+        "Total otros valores", max_digits=10, decimal_places=2, default=0)
     total_general = models.DecimalField(
-        "Total general", max_digits=10, decimal_places=2, null=True, blank=True)
+        "Total general", max_digits=10, decimal_places=2, default=0)
 
     class Meta:
 
@@ -180,6 +175,15 @@ class Lectura(ClaseModelo):
 
     def __str__(self):
         return '{}'.format(self.periodo.strftime('%b/%Y'))
+    
+    def save(self):
+        self.total_general = float(self.total_base) + \
+            float(self.total_base_reserva) +  \
+            float(self.total_excedente) + float(self.total_consumo_maximo) +\
+            float(self.total_administracion) + float(self.total_alcantarillado) +\
+            float(self.total_derecho_conexion) + float(self.total_otros)
+        # Invoco al metodo save() del padre
+        super(Lectura, self).save()
 
 class LecturaDetalle(ClaseModelo):
 
@@ -224,7 +228,9 @@ class LecturaDetalle(ClaseModelo):
 
 class MultaDetalle(ClaseModelo):
 
-    lectura = models.ForeignKey(LecturaDetalle, verbose_name="Lectura", on_delete=models.CASCADE)
+    lectura_detalle = models.ForeignKey(LecturaDetalle, verbose_name="Lectura Detalle", on_delete=models.CASCADE)
+    lectura = models.IntegerField("Lectura")
+    catastro = models.IntegerField("Catastro")
     multa = models.ForeignKey(Multa, verbose_name="Multa", on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField("Cantidad", default=1)
     valor = models.DecimalField("Valor", max_digits=10, decimal_places=2, default=0)
@@ -234,7 +240,7 @@ class MultaDetalle(ClaseModelo):
     class Meta:
         verbose_name_plural = 'Detalle de multas'
         # Unique compuesto
-        unique_together = ('lectura', 'multa')
+        unique_together = ('lectura_detalle', 'multa')
 
     def __str__(self):
         return str(self.total)
@@ -273,8 +279,7 @@ def letura_detalle_post_delete_receiver(sender, instance, **kwargs):
             lectura=lectura_id).aggregate(Sum('alcantarillado'))
         total_derecho_conexion = LecturaDetalle.objects.filter(
             lectura=lectura_id).aggregate(Sum('derecho_conexion'))
-        total_general = LecturaDetalle.objects.filter(
-            lectura=lectura_id).aggregate(Sum('total'))
+        #total_general = LecturaDetalle.objects.filter(lectura=lectura_id).aggregate(Sum('total'))
         
         enc.consumo_total = consumo_total['consumo__sum']
         enc.total_base = total_base['base__sum']
@@ -284,7 +289,7 @@ def letura_detalle_post_delete_receiver(sender, instance, **kwargs):
         enc.total_administracion = total_administracion['administracion__sum']
         enc.total_alcantarillado = total_alcantarillado['alcantarillado__sum']
         enc.total_derecho_conexion = total_derecho_conexion['derecho_conexion__sum']
-        enc.total_general = total_general['total__sum']
+        #enc.total_general = total_general['total__sum']
 
         enc.save()
 
@@ -326,8 +331,7 @@ def letura_detalle_post_save_receiver(sender, instance, **kwargs):
             lectura=lectura_id).aggregate(Sum('alcantarillado'))
         total_derecho_conexion = LecturaDetalle.objects.filter(
             lectura=lectura_id).aggregate(Sum('derecho_conexion'))
-        total_general = LecturaDetalle.objects.filter(
-            lectura=lectura_id).aggregate(Sum('total'))
+        #total_general = LecturaDetalle.objects.filter(lectura=lectura_id).aggregate(Sum('total'))
 
         enc.consumo_total = consumo_total['consumo__sum']
         enc.total_base = total_base['base__sum']
@@ -337,7 +341,7 @@ def letura_detalle_post_save_receiver(sender, instance, **kwargs):
         enc.total_administracion = total_administracion['administracion__sum']
         enc.total_alcantarillado = total_alcantarillado['alcantarillado__sum']
         enc.total_derecho_conexion = total_derecho_conexion['derecho_conexion__sum']
-        enc.total_general = total_general['total__sum']
+        #enc.total_general = total_general['total__sum']
         enc.save()
 
     med = Medidor.objects.filter(pk=id_medidor).first()
@@ -372,3 +376,44 @@ def catastro_post_delete_receiver(sender, instance, **kwargs):
     if med:
         med.asignar = False
         med.save()
+
+
+#Signal Multa Detalle ======================================================
+
+@receiver(post_save, sender=MultaDetalle)
+def multadetalle_post_save_receiver(sender, instance, **kwargs):
+    total_otros=0
+
+    id_lectura = instance.lectura_detalle.lectura.id
+    id_lectura_detalle = instance.lectura_detalle.id
+    
+    lectura = Lectura.objects.filter(pk=id_lectura).first()
+    if lectura:
+        total_otros = MultaDetalle.objects.filter(
+            lectura_detalle=id_lectura_detalle).aggregate(Sum('total'))
+        total_otros = total_otros['total__sum']
+        if total_otros==None:
+            total_otros = 0
+        
+        lectura.total_otros = total_otros
+            
+        lectura.save()
+
+@receiver(post_delete, sender=MultaDetalle)
+def multadetalle_post_delete_receiver(sender, instance, **kwargs):
+    total_otros=0
+
+    id_lectura = instance.lectura_detalle.lectura.id
+    id_lectura_detalle = instance.lectura_detalle.id
+    
+    lectura = Lectura.objects.filter(pk=id_lectura).first()
+    if lectura:
+        total_otros = MultaDetalle.objects.filter(
+            lectura_detalle=id_lectura_detalle).aggregate(Sum('total'))
+        total_otros = total_otros['total__sum']
+        if total_otros==None:
+            total_otros = 0
+        
+        lectura.total_otros = total_otros
+            
+        lectura.save()

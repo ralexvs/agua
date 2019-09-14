@@ -5,15 +5,9 @@
 {% endblock title %}
 
 {% block breadcrumb_item %}
-<li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
-    <a href="#"> Nuevo</a>
-</li>
-<li class="breadcrumb-item"><i class="fas fa-file-pdf text-danger"></i>
-    <a href="#" target="reportes"> Listado</a>
-</li>
 
 <li class="breadcrumb-item active"><i class="far fa fa-list"></i> 
-    {% if object_list %}<span class="text-success"> Ingreso de multas</span>{% else %} <span
+    {% if object_list %}<span class="text-success"> Listado para ingreso de multas</span>{% else %} <span
         class="text-danger">No existen lecturas </span>{% endif%}</li>
 {% endblock breadcrumb_item %}
 
@@ -39,7 +33,7 @@
                         <th class="text-muted">M3</th>
                         <th class="text-muted">Lectura</th>
                         <th class="text-muted">Recaudción</th>
-                        <th class="text-muted">Acciones</th>
+                        <th class="text-muted text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,23 +47,18 @@
                         <td>{{det.tipo_lectura}}</td>
                         <td>{{det.estado|yesno:'Adeuda,Pagado'}}
                         </td>
-                        <td>
-                            <a href="">
-                                <button type="button" class="btn btn-warning btn-circle"><i
-                                        class="far fa-hand-pointer"></i></button></a>
-
-                            <button
-                                
-                                class="btn btn-danger btn-circle" role="button"><abbr title="Quitar"><i
-                                        class="fas fa-trash-alt fa-xs"></i></abbr></button>
-
-                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'catastro:multadetalle_create' det.id %}">
+                                <button type="button" class="btn btn-success btn-circle"><abbr title="Agregar Multas"><i
+                                        class="fas fa-fire-alt"></i></abbr></button></a>
+                                </td>
                     </tr>
                     {% endfor%}
                 </tbody>
             </table>
         </div>
     </div>
+    <div class="card-footer small text-muted">Actualizado {{today}}</div>
 </div>
 
 

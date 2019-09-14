@@ -36,7 +36,7 @@ class RecaudacionDetalleForm(forms.ModelForm):
   
     class Meta:
         model = RecaudacionDetalle
-        fields = ['lectura', 'numero', 'lectura_anterior',
+        fields = ['lectura_detalle', 'catastro', 'lectura_anterior',
                   'lectura_actual', 'consumo', 'base', 'base_reserva', 'valor_consumo_maximo', 'valor_excedente', 'total']
 
 

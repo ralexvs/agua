@@ -27,7 +27,7 @@
             <table class="display">
                 <thead class="">
                     <tr>
-                        
+                        <th class="text-muted">#</th>
                         <th class="text-muted">Apellidos</th>
                         <th class="text-muted" >Nombres</th>
                         <th class="text-muted">Identificación</th>
@@ -40,7 +40,7 @@
                 <tbody>
                 {%for item in object_list %}
                     <tr>
-                        
+                        <td>{{forloop.counter}}</td>
                         <td>{{item.apellidos}}</td>
                         <td>{{item.nombres}}</td>
                         <td>{{item.identificacion}}</td>
@@ -84,7 +84,7 @@
         function inactivar(id){
             let data = {id:id};
             data = JSON.stringify(data);
-            var token = '{{csrf_token}}';
+            let token = '{{csrf_token}}';
             
             $.ajax({
                 headers:{"X-CSRFToken":token},

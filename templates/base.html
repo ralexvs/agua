@@ -35,10 +35,14 @@
 
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">
 
-<!--Custom datatimepicker-->
-<link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
-  integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+    <!--Custom datatimepicker-->
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
+      integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+
+  <!--Custom Chart-->
+  <script src="{% static "vendor/chart.js/Chart.bundle.min.js" %}"></script>
+  <script type="text/javascript" src="static/vendor/chart.js/Chart.bundle.min.js"></script>
 
 </head>
 
@@ -147,9 +151,9 @@
   <script src="{% static "js/sb-admin.min.js " %}"></script>
   
 
-  <!-- Custom scripts for all dataTables-->
-  <script src="{% static "vendor/datatables/jquery.dataTables.min.js " %}"></script>
+  <!-- Custom scripts for all dataTables -->
 
+  <script src="{% static "vendor/datatables/jquery.dataTables.min.js " %}"></script>
   <script src="{% static "vendor/datatables/dataTables.buttons.min.js " %}"></script>
   <script src="{% static "vendor/datatables/buttons.flash.min.js " %}"></script>
   <script src="{% static "vendor/datatables/jszip.min.js " %}"></script>
@@ -159,7 +163,7 @@
   <script src="{% static "vendor/datatables/buttons.print.min.js" %}"></script>
 
   <!-- Custom styles for this jquery-confirm-->
-  <script src="{% static "vendor/jquery-confirm/jquery-confirm.min.js " %}"></script>
+  <script src="{% static "vendor/jquery-confirm/jquery-confirm.min.js" %}"></script>
   
 <!-- Custom scripts datatimepicker-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"
@@ -233,14 +237,16 @@
 
   {% block js_pages %}
   <script>
-    $(document).ready(function () {
 
+    $(document).ready(function () {
       $("#sidebarToggle").click();
-      
       $('table.display').DataTable({
         dom: 'Bfrtip',
         buttons: [
-          'copy', 'excel', 'pdf', 'print'
+            { extend: 'copyHtml5', footer: true },
+            { extend: 'excelHtml5', footer: true },
+            { extend: 'csvHtml5', footer: true },
+            { extend: 'pdfHtml5', footer: true }
         ],
         "pagingType": "full_numbers",
         language: {
@@ -274,7 +280,7 @@
   {% endblock js_pages %}
   
   {% block varios %}
-    
+
   {% endblock varios %}
     
 

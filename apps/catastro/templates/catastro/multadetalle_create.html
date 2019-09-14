@@ -1,9 +1,30 @@
 {% extends 'base.html' %}
 
-{% block content %}
-    
 
+{% block title_pages %}
+
+{% endblock title_pages %}
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-list-ol "></i>
+    <a href="{% url 'catastro:lecturadetalle_list' %}" role=" button"> Planillas</a>
+</li>
+<li class="breadcrumb-item"><i class="far fa fa-undo text-danger"></i>
+    <a href="{{request.META.HTTP_REFERER}}" role=" button"> Cancelar</a>
+</li>
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i>
+
+    {% if multa %}<span class="text-success"> </span>
     
+    <span class="alert-info">{{lectura_detalle.catastro.abonado}}</span>
+
+    {% else %} <span class="text-danger">No
+        existen lecturas </span>{% endif%}</li>
+{% endblock breadcrumb_item %}
+
+{% block content %}
+
+
+
 <div class="modal-dialog modal-xl">
     <div class="modal-content">
         <form method="POST" id="frmMulta" role="form" class="form-inline">{% csrf_token %}
@@ -15,32 +36,22 @@
                                 <div class="text-xs font-weight-bold text-muted text-uppercase mb-1">
                                     <!--{% if encabezado %}Editar{% else %}Nueva{% endif %} Lectura -->
                                 </div>
-                                <div class="dropdown-divider"></div>
                                 <div class="row">
-                                   
+
                                     <!--Inicio encabezado-->
                                     <div class="col-12">
                                         <!--Inicio lista catastro-->
                                         <!-- DataTables Example -->
                                         <div class="card mb-3">
                                             <div class="card-body">
-                                                <div class="card-header">
-                                                    <!--Inicio encabezado-->
-                                                    <div class="input-group">
-                                                        <input class="form-control-plaintext input-group-append" type="text" name="abonado" id="id_abonado" readonly value="{{lectura.catastro.abonado}}">
-                                                        <label class="col-form-label-sm text-muted">TOTAL GENERAL</label>
-                                                        <input class="form-control-plaintext input-group-append" type="text" name="total_general" id="id_total_general" readonly>
-                                                    </div>
-                                                </div>
                                                 <div class="table-responsive">
-                                                    <table class="display" id="" style="width=100%"
-                                                        cellspacing="0">
-                                                        <thead class="bg-info">
+                                                    <table class="display" id="" style="width=100%" cellspacing="0">
+                                                        <thead class="">
                                                             <tr>
-                                                                <th class="text-light ">#</th>
-                                                                <th class="text-light">Multa y otros valores</th>
-                                                                <th class="text-light">Valor</th>
-                                                                <th class="text-light">Acción</th>
+                                                                <th >#</th>
+                                                                <th >Multa y otros valores</th>
+                                                                <th >Valor</th>
+                                                                <th >Acción</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -50,7 +61,8 @@
                                                                 <td>{{mt.descripcion}}</td>
                                                                 <td>{{mt.valor}}</td>
                                                                 <td>
-                                                                    <button type="button" class="btn btn-warning btn-circle"><i
+                                                                    <button type="button"
+                                                                        class="btn btn-warning btn-circle"><i
                                                                             class="far fa-hand-pointer"
                                                                             onclick="selectMulta({{mt.id}},'{{mt.descripcion}}',{{mt.valor}})"></i></button>
                                                                 </td>
@@ -60,24 +72,34 @@
                                                     </table>
                                                 </div>
                                                 <div class="row">
-        
                                                     <div class="col-sm-1">
-                                                        <input type="text" readonly name="lectura" id="id_lectura"
-                                                            class="form-control-plaintext text-success" value="{{abonado.id}}" required>
-                                                    </div>
-                                                    <div class="col-sm-1">
-                                                        <input type="text" readonly name="multa" id="id_multa"
-                                                            class="form-control-plaintext text-success" value="" required>
-                                                    </div>
-                                                    <div class="col-sm-7">
-                                                        <input type="text" readonly name="multa_des" id="id_multa_des" class="form-control-plaintext text-success" value=""
+                                                        <input type="text" name="catastro" id="id_catastro" value="{{lectura_detalle.catastro.id}}" readonly size="1" hidden>
+                                                        <input type="text" readonly name="multas" id="id_multas"
+                                                            class="form-control-plaintext text-success" value=""
                                                             required>
                                                     </div>
-                                                                                                        
-                                                    <div
-                                                        class=" col-sm-3 p-0 text-xs font-weight-bold text-warning text-uppercase">
-                                                        <span class="alert-warning">Multa y otros valores</span> </div>
-        
+                                                    <div class="col-sm-7">
+                                                        <input type="text" readonly name="multa_des" id="id_multa_des"
+                                                            class="form-control-plaintext text-success" value=""
+                                                            required>
+                                                    </div>
+                                                    <!--Botones-->
+                                                    <div class="col-sm-4">
+                                                        <div class="row mt-1">
+                                                            <div class="col-6">
+                                                                <button type="submit"
+                                                                    class="btn btn-success btn-block"><span
+                                                                        class="fa fa-save"></span> Grabar</button>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <button onclick="cerrar_modal()"
+                                                                    class="btn btn-secondary btn-block"><i
+                                                                        class="far fa-hand-point-left"></i>
+                                                                    Cancelar</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--Fin Botones-->
                                                 </div>
                                                 <div class=" row ">
                                                     <div class="input-group">
@@ -85,63 +107,51 @@
                                                             <span class="input-group-text">Cantidad</span>
                                                         </div>
                                                         <input type="number" name="cantidad" style="width: 12%"
-                                                            id="id_cantidad" value="0"  required>
+                                                            id="id_cantidad" value="0" required>
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">Valor</span>
                                                         </div>
-                                                        <input type="number" name="valor" id="id_valor"
-                                                            value="0" readonly required>
+                                                        <input type="number" name="valor" id="id_valor" value="0"
+                                                            readonly required>
                                                         <div class="input-group-prepend">
                                                             <span for="id_consumo" class='input-group-text'>Total</span>
                                                         </div>
-                                                        <input class='form-control-plaintext col-sm-2 bg-warning text-primary'
+                                                        <input
+                                                            class='form-control-plaintext col-sm-2 bg-warning text-primary'
                                                             type="text" name="total" id="id_total" value="0" readonly>
-                
+
                                                         <div class="col-sm-1">
                                                             <button type="button" onclick="borrar_detalle()"
                                                                 class="btn btn-sm col-sm-2"><i
                                                                     class="fa fa-minus-circle text-dange"
                                                                     aria-hidden="true"></i></button>
                                                         </div>
+                                                        <label class="col-form-label-sm text-muted">TOTAL GENERAL MULTAS
+                                                            Y OTROS $.</label>
+                                                        <input class="form-control-plaintext input-group-append"
+                                                            type="text" name="total_general" id="id_total_general"
+                                                            value="{% if total_otros.total__sum %}  {{total_otros.total__sum}} {% endif %}"
+                                                            readonly>
                                                     </div>
                                                 </div>
-                                                <!--Opciones-->
+
                                                 <div class="dropdown-divider"></div>
-                                                <div class="row">
-        
-        
-                                                    <!--Botones-->
-                                                    <div class="col">
-                                                        <div class="row">
-                                                            <div class="col-6">
-                                                                <button type="submit" class="btn btn-success btn-block"><span
-                                                                        class="fa fa-save"></span> Agregar Multa</button>
-                                                            </div>
-                                                            <div class="col-6">
-                                                                <button onclick="cerrar_modal()"
-                                                                    class="btn btn-secondary btn-block"><i
-                                                                        class="far fa-hand-point-left"></i> Cancelar</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!--Fin botones-->
+
                                             </div>
                                         </div>
                                         <!-- DataTables Example -->
                                         <div class="card mb-3">
                                             <div class="card-body">
                                                 <div class="table-responsive">
-                                                    <table class=" display" id="" style="width=100%"
-                                                        cellspacing="0">
-                                                        <thead class="table-info">
+                                                    <table class=" display bg-success" id="" style="width=100%" cellspacing="0">
+                                                        <thead class="">
                                                             <tr>
-                                                                <th class="text-muted">#</th>
-                                                                <th class="text-muted">Multa y otros valores</th>
-                                                                <th class="text-muted">Cantidad</th>
-                                                                <th class="text-muted">Valor</th>
-                                                                <th class="text-muted">Total</th>
-                                                                <th class="text-muted">Acciones</th>
+                                                                <th class="text-light">#</th>
+                                                                <th class="text-light">Multa y otros valores</th>
+                                                                <th class="text-light">Cantidad</th>
+                                                                <th class="text-light">Valor</th>
+                                                                <th class="text-light">Total</th>
+                                                                <th class="text-light">Acciones</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -152,27 +162,20 @@
                                                                 <td class="text-center">{{multad.cantidad}}</td>
                                                                 <td class="text-right">{{multad.valor}}</td>
                                                                 <td class="text-right">{{multad.total}}</td>
-                                                                
+
                                                                 <td>
                                                                     <button
-                                                                        
-                                                                        class="btn btn-success btn-circle" role="button"><abbr
-                                                                            title="Multas"><i
-                                                                                class="fas fa-fire-alt"></i></abbr></button>
-        
-                                                                    <a href="{{request.META.HTTP_REFERER}}"><button
-                                                                        
-                                                                        class="btn btn-danger btn-circle" role="button"><abbr
-                                                                            title="Quitar"><i
+                                                                        onclick="return abrir_modal('{% url 'catastro:multadetalle_delete' lectura_detalle multad.pk %}')"
+                                                                        class="btn btn-danger btn-circle"
+                                                                        role="button"><abbr title="Quitar"><i
                                                                                 class="fas fa-trash-alt fa-xs"></i></abbr></button>
-                                                                                </a>
-        
+
                                                                 </td>
                                                             </tr>
                                                             {% endfor%}
                                                         </tbody>
                                                     </table>
-                                                   
+
                                                 </div>
                                             </div>
                                         </div>
@@ -183,20 +186,20 @@
                                 <div class="row">
                                     <!--inicio detalle lectura-->
                                     <div class="col">
-        
-        
+
+
                                     </div>
-        
+
                                 </div>
                                 <!--fin detalle lectura-->
-        
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
-        
+
     </div>
 </div>
 {% endblock content %}
@@ -205,7 +208,7 @@
     $(document).ready(function () {
         $("#sidebarToggle").click();
         $('table.display').DataTable({
-            "pageLength": 4,
+            "pageLength": 2,
             "pagingType": "full_numbers",
             language: {
 
@@ -232,7 +235,7 @@
                     "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                 }
             }
-            
+
         });
 
         $('#id_cantidad').change(function () {
@@ -241,7 +244,7 @@
 
         /* Validar envío de Detalle*/
         $('#frmMulta').submit(function (e) {
-            if (parseInt($('#id_cantidad').val()) <= 0 ) {
+            if (parseInt($('#id_cantidad').val()) <= 0) {
                 e.preventDefault();
                 $.alert({
                     type: 'red',
@@ -254,10 +257,10 @@
 
     function selectMulta(id, multa_des, valor) {
         borrar_detalle();
-        $('#id_multa').val(+id);
+        $('#id_multas').val(+id);
         $('#id_multa_des').val(multa_des);
         $('#id_valor').val(+valor);
-        
+
         $('#id_cantidad').focus();
         $('#id_cantidad').select();
         $('table.display').DataTable().search('').draw();
@@ -265,7 +268,7 @@
 
     function calcular() {
 
-        let cantidad,valor,total;
+        let cantidad, valor, total;
         cantidad = $('#id_cantidad').val();
         valor = $('#id_valor').val();
         cantidad = cantidad === "" ? 0 : +cantidad;

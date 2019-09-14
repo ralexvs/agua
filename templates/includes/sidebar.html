@@ -9,49 +9,67 @@
         <a class="nav-link dropdown-toggle" href="#" id="pagesDropdownParametro" role="button" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-cogs"></i>
-            <span class="text-light">Parametrización</span>
+            <span class="text-light">Configuración</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdownParametro">
+            <h6 class="dropdown-header">Configuración</h6>
             <a class="dropdown-item" href="{% url 'parametro:entidad_list' %}">Entidad</a>
             <a class="dropdown-item" href="{% url 'parametro:servicio_list' %}">Tipo de servicios</a>
             <a class="dropdown-item" href="{% url 'parametro:tarifa_list' %}">Tarifas</a>
-            <a class="dropdown-item" href="{% url 'parametro:multa_list' %}">Multas y otros</a>
             <a class="dropdown-item" href="{% url 'parametro:descuento_list' %}">Descuentos</a>
             <a class="dropdown-item" href="{% url 'parametro:pago_list' %}">Formas de pago</a>
-
+            <a class="dropdown-item" href="{% url 'parametro:multa_list' %}">Multas y otros</a>
         </div>
     </li>
 
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="pagesDropdownCatalogo" role="button" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-fw fa-folder"></i>
+            <i class="far fa-newspaper"></i>
             <span class="text-light">Catastro</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdownCatalogo">
-            <h6 class="dropdown-header">Catálogos</h6>
+            <h6 class="dropdown-header">Catastros</h6>
             <a class="dropdown-item" href="{% url 'catastro:medidor_list' %}">Medidores</a>
             <a class="dropdown-item" href="{% url 'catastro:barrio_list' %}">Sectores / Barrios</a>
             <a class="dropdown-item" href="{% url 'catastro:abonado_list' %}">Abonados</a>
-            <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'catastro:catastro_list' %}">Catastro</a>
-            <div class="dropdown-divider"></div>
-            
-            <h6 class="dropdown-header">Planillas:</h6>
-            <a class="dropdown-item" href="{% url 'catastro:tipolectura_list' %}">Tipo de lectura</a>
-            <a class="dropdown-item" href="{% url 'catastro:lectura_list' %}">Tomas de lectura</a>
-            <a class="dropdown-item " href="{% url 'catastro:lecturadetalle_list' %}">Ingreso de multas y otros</a>
-            
         </div>
     </li>
+
+
+
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdownLectura" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-marker"></i>
+            <span class="text-light">Lecturas</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdownLectura">
+            <h6 class="dropdown-header">Lecturas</h6>
+            <a class="dropdown-item" href="{% url 'catastro:tipolectura_list' %}">Tipo de lectura</a>
+             <a class="dropdown-item" href="{% url 'catastro:lectura_list' %}">Ingresos de lectura</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'catastro:toma_lecturas' %}">Hojas tomas de lectura</a>
+        </div>
+    </li>
+
+     <li class="nav-item">
+        <a class="nav-link" href="{% url 'catastro:lecturadetalle_list' %}">
+            <i class="fas fa-fw fa-table"></i>
+            <span class="text-light">Asignar multas</span></a>
+    </li>
+
+
     <li class="nav-item ">
         <a class="nav-link " href="{% url 'recaudacion:lectura_detalle_list' %}" >
             <i class="fas fa-money-check-alt"></i>
-            <span class="text-light">Recaudación</span>
+            <span class="text-light">Recaudar planillas</span>
         </a>
-        
     </li>
-    
+
+
+
     <h6 class="dropdown-header"><b>Informes</b></h6>
     <div class="dropdown-divider"></div>
     <li class="nav-item">
@@ -60,9 +78,9 @@
             <span class="text-light">Servicio suspendidos</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{% url 'recaudacion:informe_caja' %}">
             <i class="fas fa-fw fa-table"></i>
-            <span class="text-light">Catálogo general</span></a>
+            <span class="text-light">Informes de caja</span></a>
     </li>
     <li class="nav-item">
         

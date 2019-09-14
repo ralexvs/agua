@@ -218,6 +218,20 @@ class CatastroList(SinPrivilegios, ListView):
     permission_required = 'catastro.view_catastro'
     model = Catastro
 
+class TomaLecturaList(SinPrivilegios, ListView):
+    permission_required = 'catastro.view_catastro'
+    template_name = 'catastro/toma_lecturas.html'
+    model = Catastro
+    queryset = Catastro.objects.filter(suspender=False).order_by('abonado__apellidos')
+
+    def get_context_data(self, **kwargs):
+        context = super(TomaLecturaList, self).get_context_data(**kwargs)
+        # context.update({'ahora':self.ahora}) #tambien funciona
+        context['today'] = timezone.now()
+        return context
+
+
+
 
 class CatastroSuspendido(SinPrivilegios, ListView):
 
@@ -428,7 +442,7 @@ def lectura(request, lectura_id=None):
         
         if enc:
             
-            det = LecturaDetalle.objects.filter(lectura=enc)
+            det = LecturaDetalle.objects.filter(lectura=enc,estado=True)
             periodo = datetime.date.isoformat(enc.periodo)
             e = {
                 'periodo':periodo,
@@ -441,6 +455,7 @@ def lectura(request, lectura_id=None):
                 'total_administracion': enc.total_administracion,
                 'total_alcantarillado': enc.total_alcantarillado,
                 'total_derecho_conexion': enc.total_derecho_conexion,
+                'total_otros': enc.total_otros,
                 'total_general': enc.total_general,
             }
             #Rendirizamos el formulario con los campos que devuelve enc.
@@ -462,7 +477,7 @@ def lectura(request, lectura_id=None):
         total_administracion = 0
         total_alcantarillado = 0
         total_derecho_conexion = 0
-        total_general = 0
+        #total_general = 0
 
         #si no se envia lectura_id quiere decir que el encabezado no existe
         if not lectura_id:
@@ -569,8 +584,7 @@ def lectura(request, lectura_id=None):
             total_alcantarillado = LecturaDetalle.objects.filter(lectura=lectura_id).aggregate(Sum('alcantarillado'))
             total_derecho_conexion = LecturaDetalle.objects.filter(
                     lectura=lectura_id).aggregate(Sum('derecho_conexion'))
-            total_general = LecturaDetalle.objects.filter(
-                lectura=lectura_id).aggregate(Sum('total'))
+            #total_general = LecturaDetalle.objects.filter(lectura=lectura_id).aggregate(Sum('total'))
 
             enc.consumo_total = consumo_total['consumo__sum']
             enc.total_base = total_base['base__sum']
@@ -580,7 +594,7 @@ def lectura(request, lectura_id=None):
             enc.total_administracion = total_administracion['administracion__sum']
             enc.total_alcantarillado = total_alcantarillado['alcantarillado__sum']
             enc.total_derecho_conexion = total_derecho_conexion['derecho_conexion__sum']
-            enc.total_general = total_general['total__sum']
+            #enc.total_general = total_general['total__sum']
             enc.save()
         
         return redirect('catastro:lectura_update', lectura_id=lectura_id)
@@ -652,39 +666,40 @@ class MultaDetalleUpdate(VistaBaseUpdate):
     success_url = reverse_lazy('catastro:multadetalle_list')
 
 
-class MultaDetalleDelete(SinPrivilegios, DeleteView):
 
-    permission_required = 'catastro.delete_multadetalle'
-    model = MultaDetalle
-    template_name = "catastro/multadetalle_del.html"
-    success_url = reverse_lazy('catastro:multadetalle_list')
 
 
 @login_required(login_url='login')
 @permission_required('catastro.view_multadetalle', login_url='sin_privilegio')
-def multa_detalle(request, lectura_id=None):
+def multa_detalle(request, lectura_detalle_id=None):
 
-    template_name = 'catastro/multadetalle_form.html'
+    template_name = 'catastro/multadetalle_create.html'
     multa = Multa.objects.filter(estado=True)
-    lectura = LecturaDetalle.objects.filter(pk=lectura_id).first()
+    lectura_detalle = LecturaDetalle.objects.filter(pk=lectura_detalle_id).first()
     
     contexto = {}
 
     if request.method == 'GET':
         #Filtramos la información que visualizamos en pantalla
-        detalle = MultaDetalle.objects.filter(lectura=lectura_id)
-        contexto = {'multa': multa, 'lectura': lectura, 'detalle': detalle, }
+        detalle = MultaDetalle.objects.filter(
+            lectura_detalle=lectura_detalle_id)
+        total_otros = MultaDetalle.objects.filter(
+            lectura_detalle=lectura_detalle_id).aggregate(Sum('total'))
+        contexto = {'multa': multa, 'lectura_detalle': lectura_detalle,
+                    'detalle': detalle, 'total_otros': total_otros}
 
     if request.method == 'POST':
         
-        mul = request.POST.get('multa')
+        mul = request.POST.get('multas')
         multa = Multa.objects.filter(pk=mul).first()
+        catastro = request.POST.get('catastro')
+        lectura = lectura_detalle.lectura.id
         cantidad = request.POST.get('cantidad')
         valor = request.POST.get('valor')
-        
-        print('Imprimiendo  ' ,lectura.id, multa, 'valores', cantidad, valor)
-        if lectura_id:
+        if lectura_detalle_id:
             enc = MultaDetalle(
+                lectura_detalle=lectura_detalle,
+                catastro = int(catastro),
                 lectura = lectura,
                 multa = multa,
                 cantidad = int(cantidad),
@@ -693,12 +708,36 @@ def multa_detalle(request, lectura_id=None):
             )
             if enc:
                 enc.save()
-                lectura_id =enc.id
-
+                lectura_detalle_id = enc.lectura_detalle.id
+        return redirect('catastro:multadetalle_update', lectura_detalle_id=lectura_detalle_id)
 
     return render(request, template_name, contexto)
 
+
+class MultaDetalleDelete(SinPrivilegios, DeleteView):
+
+    permission_required = 'catastro.delete_multadetalle'
+    model = MultaDetalle
+    template_name = "catastro/multadetalle_del.html"
+
+    def get_success_url(self):
+        lectura_detalle_id = self.kwargs['lectura_detalle_id']
+        return reverse_lazy('catastro:multadetalle_update', kwargs={'lectura_detalle_id': lectura_detalle_id})
+
+
+
+
+
+# Vista para ingresar multas
 class LecturaDetalleList(SinPrivilegios, ListView):
   
     permission_required = 'catastro.view_lecturadetalle'
     model = LecturaDetalle
+    queryset = LecturaDetalle.objects.filter(estado=True)
+    
+    def get_context_data(self, **kwargs):
+        context = super(LecturaDetalleList, self).get_context_data(**kwargs)
+        #context.update({'ahora':self.ahora}) #tambien funciona
+        context['today'] = timezone.now()
+        return context
+    

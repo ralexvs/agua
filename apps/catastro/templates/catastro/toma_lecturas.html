@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    toma lecturas
+{% endblock title %}
+
+{% block breadcrumb_item %}
+<li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
+    <a href="#"  " role="button" onclick="return abrir_modal('{% url 'catastro:catastro_create' %}')"> Nuevo</a>
+</li>
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if object_list %}<span class="text-success"> Catastros</span>{% else %} <span
+    class="text-danger">No existen catastros</span>{% endif%}</li>
+{% endblock breadcrumb_item %}
+
+{% block linea %}
+    
+{% endblock linea %}
+    
+    
+{% block content %}
+
+
+<!-- DataTables Example -->
+<div class="card mb-3">
+        <div class="card-body">
+        <div class="table-responsive">
+            <table class="display" style="width=100%" cellspacing="0">
+                <thead class="">
+                    <tr>
+                        <th class="text-muted">#</th>
+                        <th class="text-muted">Abonado</th>
+                        <th class="text-muted">Dirección</th>
+                        <th class="text-muted">Catastro</th>
+                        <th class="text-muted">Medidor</th>
+                        <th class="text-muted">Lec. anterior</th>
+                        <th class="text-muted">Lec. actual</th>
+                        <th class="text-muted">Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {%for item in object_list %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{item.abonado}}</td>
+                        <td>{{item.abonado.direccion}}</td>
+                        <td>{{item.numero}}</td>
+                        <td>{{item.medidor.numero}}</td>
+                        <td>{{item.medidor.lectura_inicial}}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                {% endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer small text-muted">´{{today}}</div>
+</div>
+
+
+{% endblock content %}
+
+

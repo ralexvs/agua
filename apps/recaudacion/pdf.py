@@ -62,7 +62,7 @@ def panilla_cobrada_pdf(request):
                             topMargin=40,
                             bottomMargin=20,
                             )
-    elements = []
+    elementos = []
     # Estilos
     styles = getSampleStyleSheet()
 
@@ -71,7 +71,7 @@ def panilla_cobrada_pdf(request):
         <strong ><font size=14>REPORTE</font></strong>
     '''
     header = Paragraph('REPORTE DE PLANILLAS RECAUDADAS', styles["Title"])
-    elements.append(header)
+    elementos.append(header)
     headings = ('Fecha', 'Nombre', 'Pago', 'Subtotal', 'Desc.', 'Total')
     allplanillas = [(p.fecha, p.abonado, p.pago, p.subtotal, p.total_descuento, p.total_general)
                     for p in Recaudacion.objects.all()]
@@ -84,10 +84,10 @@ def panilla_cobrada_pdf(request):
             ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
         ]
     ))
-    elements.append(t)
-    doc.build(elements)
+    elementos.append(t)
+    doc.build(elementos)
     response.write(buff.getvalue())
-    buff.close()
+    buffer.close()
     return response
 
 class ReportePlanillaPDF(View):

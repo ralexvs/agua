@@ -80,55 +80,60 @@
             </div>
         </div>
     </div>
-    
-    <!-- DataTables Example -->
+    <!-- Area Chart Example-->
     <div class="card mb-3">
+
+        <div class="card-header">
+            <i class="fas fa-chart-area"></i>
+            Gráfico de lecturas</div>
+        <div class="card-body">
+            <canvas id="myChart" width="100%" height="30"></canvas>
+        </div>
+        <div class="card-footer small text-muted">Actualizado a las {{ahora}}</div>
+    </div>
+
+    <!-- DataTables  -->
+    <div class="row">
+    <!-- DataTables Recaudado -->
+    <div class="mb-3 col-7 ">
+        <div class="card">
         <div class="card-header">
             <i class="fas fa-table"></i>
-            Cobradas <span class="badge badge-success">{{recaudado.count}}</span> Planillas
+            Cobradas <span class="badge badge-success">{{recaudado.count}}</span> planillas
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="display" id="table" style="width=100%"
-                        cellspacing="0">
+                    <table class="display" >
                         <thead >
                             <tr>
-                                <th>Abonado</th>
-                                <th>Fecha</th>
-                                <th>Ley especial</th>
-                                <th>Pago</th>
-                                <th>Subtotal</th>
-                                <th>Descuento</th>
-                                <th>Total</th>
-                                <th>Planilla</th>
+                                <th><i class="fas fa-users text-muted"></i></th>
+                                <th class="text-muted ">Subt.</th>
+                                <th class="text-muted ">Desc.</th>
+                                <th class="text-muted ">Total</th>
+                                <th><i class="fas fa-cogs text-muted"></i></th>
                             </tr>
                         </thead>
                         <tbody>
                             {%for item in recaudado %}
                             <tr>
                                 <!--<td>{{forloop.counter}}</td>-->
-                                <td>{{item.abonado}}</td>
-                                <td>{{item.fecha|date:'d/b/Y'}}</td>
-                                <td>{{item.descuento}}</td>
-                                <td>{{item.pago}}</td>
+                                <td><small>{{item.abonado}}</small></td>
                                 <td class="text-right text-monospace">{{item.subtotal}}</td>
                                 <td class="text-right text-monospace">{{item.total_descuento}}</td>
                                 <td class="text-right text-monospace">{{item.total_general}}</td>
                                 <td class="text-center">
     
                                     <a href="{% url 'recaudacion:planilla_recaudada' item.id %}" target="reportes"
-                                        class="btn btn-outline-secondary" role="button"><abbr title="Planilla pagada"><i
-                                                class="fas fa-file-pdf text-danger"></i></abbr></a>
+                                        class="btn btn-outline-secondary btn-sm" role="button"><abbr title="Planilla pagada"><i
+                                                class="fas fa-file-pdf text-danger fa-sm"></i></abbr></a>
                                 </td>
                             </tr>
                             {% endfor%}
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th>
-                                    <span class="badge badge-warning">Totales <span class="spinner-grow spinner-grow-sm text-light spinner-border-md" role="status" aria-hidden="true">
+                                <th class="text-right">
+                                    <span class="badge badge-success ">Totales <span class="spinner-grow spinner-grow-sm text-light spinner-border-md" role="status" aria-hidden="true">
                                     <span class="text-dark">$</span></span> 
                                     </span>
                                 </th>
@@ -148,21 +153,57 @@
                     </table>
                 </div>
             </div>
-            <div class="card-footer small text-muted">Actualizado a las {{ahora}}</div>
         </div>
+    </div>
+    <div class="mb-3 col-5">
+        <div class="card">
+        <div class="card-header">
+            <i class="fas fa-table"></i>
+            Pendientes de cobro <span class="badge badge-danger">{{deudores.count}}</span> planillas
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="display" >
+                        <thead>
+                            <tr>
+                                <th ><i class="fas fa-users text-muted"></i></th>
+                                <th class="text-muted text-center"><i class="fas fa-money-bill-wave"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for d in deudores %}
+                            <tr>
+                                <!--<td>{{forloop.counter}}</td>-->
+                                <td><small>{{d.catastro.abonado}}</small></td>
+                                <td class="text-right text-monospace">{{d.total}}</td>
+                               
+                            </tr>
+                            {% endfor%}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th class="text-right">
+                                    <span class="badge badge-danger ">Totales<span
+                                            class="spinner-grow spinner-grow-sm text-light spinner-border-md" role="status"
+                                            aria-hidden="true">
+                                            <span class="text-dark">$</span></span>
+                                    </span>
+                                </th>
+                               
+                                <th class="text-right  text-monospace">
+                                    {{total.total__sum}}
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer small text-muted">Actualizado a las {{ahora}}</div>
+        
+        </div>
+    </div>
     </div>
 
-    <!-- Area Chart Example-->
-    <div class="card mb-3">
-        <div class="card-header">
-            <i class="fas fa-chart-area"></i>
-            Area Chart Example</div>
-        <div class="card-body">
-            <canvas id="myAreaChart" width="100%" height="30"></canvas>
-        </div>
-        <div class="card-footer small text-muted">Actualizado a las {{ahora}}</div>
-    </div>
-    
     
 {% endblock content %}
 
@@ -170,11 +211,15 @@
     <script>
         $(document).ready(function () {
             $("#sidebarToggle").click();
-                $('#table').DataTable({
-                    dom: 'Bfrtip',
-                    buttons: [
-                        'copy', 'excel', 'pdf','print'
-                    ],
+                $('table.display').DataTable({
+                    "pageLength": 4,
+                   dom: 'Bfrtip',
+                buttons: [
+                    { extend: 'copyHtml5', footer: true, title: '{{entidad.descripcion}}' },
+                    { extend: 'excelHtml5', footer: true, title: '{{entidad.descripcion}}' },
+                    { extend: 'csvHtml5', footer: true },
+                    { extend: 'pdfHtml5', footer: true, title: '{{entidad.descripcion}}' }
+                ],
                     "pagingType": "full_numbers",
                     language: {
                         "sProcessing": "Procesando...",
@@ -202,9 +247,61 @@
                     }
                 });
 
-               
-                
+
+
             });
     </script>
 {% endblock js_pages %}
-    
+
+{% block varios %}
+<script>
+    var dat = {{voto|safe}};
+    var col = {{color|safe}};
+    var preg = {{pregunta|safe}};
+    var i = {{i|safe}};
+    var pieDate = [];
+    var k = 0;
+    for (var j = 0; j < i; j++){
+        pieDate[j]={value:dat[j], color:col[j], highlight:"#0c62ab", label:preg[j]};
+    }
+   var ctx = document.getElementById('myChart').getContext('2d');
+
+   var myChart = new Chart(ctx, {
+       type: 'line',
+    data: {
+        labels: preg,
+        datasets: [{
+            label: 'M3 consumidos',
+            data: dat,
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+
+});
+</script>
+  {% endblock varios %}

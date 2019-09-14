@@ -27,11 +27,10 @@
             <table class="display" style="width=100%" cellspacing="0">
                 <thead class="">
                     <tr>
+                        <th class="text-muted">#</th>
                         <th class="text-muted">Abonado</th>
                         <th class="text-muted">Catastro</th>
-                        
                         <!--<th class="text-muted">Peticionario</th>-->
-                        <th class="text-muted">Servico</th>
                         <th class="text-muted">Medidor</th>
                         <th class="text-muted">Descuento</th>
                         <th class="text-muted">Suspender</th>
@@ -41,6 +40,7 @@
                 <tbody>
                 {%for item in object_list %}
                     <tr>
+                        <td>{{forloop.counter}}</td>
                         <td>{{item.abonado}}</td>
                         <td>{{item.numero}}</td>
                         
@@ -53,7 +53,7 @@
                                 Nuevo en la comunidad
                             {%endif%}
                         </td>-->
-                        <td>{{item.servicio}}</td>
+                        
                         <td>{{item.medidor.numero}}</td>
                         <td>{{item.descuento}}</td>
                         <td>{{item.suspender|yesno:'Suspendido, Activo'}}</td>

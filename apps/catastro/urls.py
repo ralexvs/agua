@@ -4,6 +4,7 @@ from .views import (
     BarrioList, BarrioCreate, BarrioUpdate, BarrioDelete, barrio_inactivar,
     AbonadoList, AbonadoCreate, AbonadoUpdate, AbonadoDelete, abonado_inactivar, abonado_inactivar_js, search,
     CatastroList, CatastroCreate, CatastroUpdate, CatastroDelete, catastro_inactivar, catastro_suspender_servicio, CatastroSuspendido,
+    TomaLecturaList,
     TipoLecturaList, TipoLecturaCreate, TipoLecturaUpdate, TipoLecturaDelete, tipolectura_inactivar,
     LecturaList,  LecturaDelete, lectura_inactivar, lectura, 
     LecturaDetalleList, LecturaDetalleDelete,
@@ -48,6 +49,7 @@ urlpatterns = [
           catastro_suspender_servicio, name='catastro_suspender_servicio'),
 
     path('catastros/suspendidos/', CatastroSuspendido.as_view(),name='catastro_suspendido'),
+    path('catastros/toma_lecturas/', TomaLecturaList.as_view(),name='toma_lecturas'),
 
 
      path('tipolecturas/', TipoLecturaList.as_view(), name='tipolectura_list'),
@@ -69,14 +71,10 @@ urlpatterns = [
 
      path('lecturasdetalle/', LecturaDetalleList.as_view(), name='lecturadetalle_list'),
     
-
-    path('multadetalle/', MultaDetalleList.as_view(), name='multadetalle_list'),
-    path('multadetalle/create', MultaDetalleCreate.as_view(),
-         name='multadetalle_new'),
-    path('multadetalle/update/<int:pk>/',
-         MultaDetalleUpdate.as_view(), name='multadetalle_update'),
-    path('multadetalle/delete/<int:pk>/',
+    path('multadetalle/<int:lectura_detalle_id>/delete/<int:pk>/',
          MultaDetalleDelete.as_view(), name='multadetalle_delete'),
-    path('multadetalle/multa/<int:lectura_id>/',
+    path('multadetalle/create/<int:lectura_detalle_id>/',
          multa_detalle, name='multadetalle_create'),
+    path('multadetalle/update/<int:lectura_detalle_id>',
+         multa_detalle, name='multadetalle_update'),
 ]

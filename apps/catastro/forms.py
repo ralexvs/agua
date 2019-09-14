@@ -38,7 +38,7 @@ class BarrioForm(forms.ModelForm):
 
 
 class AbonadoForm(forms.ModelForm):
-      
+    
     barrio = forms.ModelChoiceField(
         queryset=Barrio.objects.filter(estado=True)
         .order_by('descripcion')
@@ -60,6 +60,7 @@ class AbonadoForm(forms.ModelForm):
         
         self.fields['barrio'].empty_label = 'Seleccione barrio o sector'
         self.fields['sexo'].widget.attrs['readonly'] = True
+        self.fields['fecha_nacimiento'].widget.attrs['readonly'] = True
 
 
 
@@ -69,7 +70,6 @@ class CatastroForm(forms.ModelForm):
         queryset=Abonado.objects.filter(estado=True)
         .order_by('apellidos')
     )
-
     medidor = forms.ModelChoiceField(
         queryset=Medidor.objects.filter(estado=True)
         .order_by('descripcion')
@@ -126,7 +126,7 @@ class LecturaForm(forms.ModelForm):
         model = Lectura
         fields = ('periodo', 'descripcion', 'consumo_total',
                 'total_base', 'total_base_reserva', 'total_excedente', 'total_consumo_maximo', 'total_administracion',
-                  'total_alcantarillado', 'total_derecho_conexion', 'total_general')
+                  'total_alcantarillado', 'total_derecho_conexion','total_otros', 'total_general')
     
     def __init__(self, *args, **kwargs):
 
@@ -146,6 +146,7 @@ class LecturaForm(forms.ModelForm):
         self.fields['total_administracion'].widget.attrs['readonly'] = True
         self.fields['total_alcantarillado'].widget.attrs['readonly'] = True
         self.fields['total_derecho_conexion'].widget.attrs['readonly'] = True
+        self.fields['total_otros'].widget.attrs['readonly'] = True
         self.fields['total_general'].widget.attrs['readonly'] = True
 
 class MultaDetalleForm(forms.ModelForm):
@@ -155,7 +156,7 @@ class MultaDetalleForm(forms.ModelForm):
     
     class Meta:
         model = MultaDetalle
-        fields = ('lectura','multa','cantidad','valor','total')
+        fields = ('lectura_detalle','multa','cantidad','valor','total')
         
     def __init__(self, *args, **kwargs):
         super(MultaDetalleForm, self).__init__(*args, **kwargs)
