@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LecturaDetalleList, RecaudacionList, recaudacion, RecaudacionCreate, plantilla, informe_caja
+from .views import LecturaDetalleList, RecaudacionList, recaudacion, RecaudacionCreate, plantilla, informe_caja_global, informe_caja_individual
 from .pdf import panilla_cobrada_pdf, ReportePlanillaPDF
 from .reportes_pdf import planilla_recaudada, informe_caja_pdf
 from .excel import *
@@ -20,7 +20,8 @@ urlpatterns = [
     path('recaudaciones/pdf/caja/', informe_caja_pdf, name='informe_caja_pdf'),
     path('planilla/<int:pk>/', planilla_recaudada, name='planilla_recaudada'),
 
-    path('informe/caja/', informe_caja, name='informe_caja'),
+    path('informes/caja/', informe_caja_global, name='informe_caja_global'),
+    path('informes/caja/individual/', informe_caja_individual, name='informe_caja_individual'),
 ]
 
      

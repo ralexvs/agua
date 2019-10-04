@@ -8,7 +8,6 @@ from django.dispatch import receiver
 from apps.core.models import ClaseModelo
 from apps.parametro.models import Servicio, Pago, Descuento, Multa, Tarifa
 
-
 # Create your models here.
 
 class Medidor(ClaseModelo):
@@ -25,8 +24,7 @@ class Medidor(ClaseModelo):
 
     def __str__(self):
         return '{}'.format(str(self.numero))
-
-
+        
 
 class Barrio(ClaseModelo):
 
@@ -171,7 +169,7 @@ class Lectura(ClaseModelo):
 
         verbose_name = 'Lectura'
         verbose_name_plural = 'Lecturas'
-        ordering = ['id']
+        ordering = ['-id']
 
     def __str__(self):
         return '{}'.format(self.periodo.strftime('%b/%Y'))
@@ -212,6 +210,8 @@ class LecturaDetalle(ClaseModelo):
         verbose_name_plural = 'Detalle Lecturas'
         # Unique compuesto
         unique_together = ('lectura', 'catastro')
+        ordering = ['-id']
+
 
     def __str__(self):
         return str(self.lectura_anterior)

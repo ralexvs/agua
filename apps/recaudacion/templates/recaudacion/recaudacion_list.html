@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    lecturas
+    Recaudados
 {% endblock title %}
 
 {% block breadcrumb_item %}
@@ -46,15 +46,15 @@
                 <tbody>
                 {%for item in object_list %}
                     <tr>
-                        <td>{{item.id}}</td>
+                        <td>{{forloop.counter}}</td>
                         <td>{{item.fecha|date:'d/b/Y'}}</td>
                         <td>{{item.abonado}}</td>
                         <td>{{item.descuento}}</td>
                         <td>{{item.pago}}</td>
-                        <td>{{item.subtotal}}</td>
-                        <td>{{item.total_descuento}}</td>
-                        <td>{{item.total_general}}</td>
-                        <td>
+                        <td class="text-center">{{item.subtotal}}</td>
+                        <td class="text-center">{{item.total_descuento}}</td>
+                        <td class="text-center">{{item.total_general}}</td>
+                        <td class="text-center">
                             
                             <a href="{% url 'recaudacion:planilla_recaudada' item.id %}" target="reportes"
                                 class="btn btn-outline-secondary" role="button"><abbr title="Planilla pagada"><i

@@ -8,7 +8,7 @@
 <li class="breadcrumb-item"><i class="far fa fa-file-alt text-success"></i>
     <a href="#"  " role="button" onclick="return abrir_modal('{% url 'catastro:catastro_create' %}')"> Nuevo</a>
 </li>
-<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if object_list %}<span class="text-success"> Catastros</span>{% else %} <span
+<li class="breadcrumb-item active"><i class="far fa fa-list"></i> {% if catastro %}<span class="text-success"> Listado toma de lecturas</span>{% else %} <span
     class="text-danger">No existen catastros</span>{% endif%}</li>
 {% endblock breadcrumb_item %}
 
@@ -32,20 +32,20 @@
                         <th class="text-muted">Dirección</th>
                         <th class="text-muted">Catastro</th>
                         <th class="text-muted">Medidor</th>
-                        <th class="text-muted">Lec. anterior</th>
+                        <!-- <th class="text-muted">Lec. anterior</th>-->
                         <th class="text-muted">Lec. actual</th>
                         <th class="text-muted">Observaciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                {%for item in object_list %}
+                {%for item in catastro %}
                     <tr>
                         <td>{{forloop.counter}}</td>
                         <td>{{item.abonado}}</td>
                         <td>{{item.abonado.direccion}}</td>
                         <td>{{item.numero}}</td>
                         <td>{{item.medidor.numero}}</td>
-                        <td>{{item.medidor.lectura_inicial}}</td>
+                        <!-- <td>{{item.medidor.lectura_inicial}}</td> -->
                         <td></td>
                         <td></td>
                     </tr>
@@ -60,4 +60,51 @@
 
 {% endblock content %}
 
+{% block js_pages %}
+<script>
+    $(document).ready(function() {
+    $("#sidebarToggle").click();
+
+    $('table.display').DataTable( {
+         dom: 'Bfrtip',
+
+        buttons: [
+            { extend: 'copy', },
+            { extend: 'excel',
+            title: '{{entidad.descripcion}}',
+             messageTop: 'HOJA TOMA DE LECTURAS {{today}} Usuario: {{request.user}}'},
+            { extend: 'print', 
+            title: '{{entidad.descripcion}}', 
+            messageTop: 'HOJA TOMA DE LECTURAS {{today}} Usuario: {{request.user}}'},
+            
+        ],
+        "pagingType": "full_numbers",
+        language: {
+          "sProcessing": "Procesando...",
+          "sLengthMenu": "Mostrar _MENU_ registros",
+          "sZeroRecords": "No se encontraron resultados",
+          "sEmptyTable": "Ningún dato disponible en esta tabla",
+          "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+          "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+          "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+          "sInfoPostFix": "",
+          "sSearch": "Buscar:",
+          "sUrl": "",
+          "sInfoThousands": ",",
+          "sLoadingRecords": "Cargando...",
+          "oPaginate": {
+            "sFirst": "<i class= 'fas fa-angle-double-left'></i>",
+            "sLast": "<i class= 'fas fa-angle-double-right'></i>",
+            "sNext": "<i class= 'fas fa-angle-right'></i>",
+            "sPrevious": "<i class= 'fas fa-angle-left'></i>",
+          },
+          "oAria": {
+            "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+          }
+        },
+    } );
+} );
+</script>
+{% endblock js_pages %}
 

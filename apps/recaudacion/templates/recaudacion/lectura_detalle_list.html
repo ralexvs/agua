@@ -38,7 +38,7 @@
                         <th class="text-muted">L. Act.</th>
                         <th class="text-muted">M3</th>
                         <th class="text-muted  ">Total</th>
-                        <th class="text-muted">General</th>
+                        <th class="text-muted">Recaudar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,7 +51,11 @@
                         <td class="text-center">{{det.lectura_actual}}</td>
                         <td class="text-center">{{det.consumo}}</td>
                         <td class="table-success text-right">{{det.total}}</td>
-                        <td></td>
+                        <td class="text-center">
+                            <a href="{% url 'recaudacion:recaudacion_create' det.catastro.id %}" target="recaudar"
+                                class="btn btn-outline-secondary" role="button"><abbr title="Planilla a cobrar"><i
+                                        class="fas fa-money-bill text-success"></i></abbr></a>
+                        </td>
                     </tr>
                     {% endfor%}
                 </tbody>

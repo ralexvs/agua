@@ -77,21 +77,29 @@
             <i class="fas fa-phone-slash"></i>
             <span class="text-light">Servicio suspendidos</span></a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'recaudacion:informe_caja' %}">
-            <i class="fas fa-fw fa-table"></i>
-            <span class="text-light">Informes de caja</span></a>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdownInformes" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-marker"></i>
+            <span class="text-light">Informes</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdownInformes">
+            <h6 class="dropdown-header">Informes</h6>
+            <a class="dropdown-item" href="{% url 'recaudacion:informe_caja_global' %}">Informes de caja</a>
+             <a class="dropdown-item" href="{% url 'recaudacion:informe_caja_individual' %}">Informes individual</a>
+        </div>
     </li>
+
     <li class="nav-item">
         
         <a class="nav-link" href="{% url 'recaudacion:recaudacion_list' %}">
             <i class="fas fa-file-invoice-dollar"></i>
-            <span class="text-light">Valores recaudados</span></a>
+            <span class="text-light">Impresion de planillas</span></a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{% url 'recaudacion:lectura_detalle_list' %}">
             <i class="fas fa-fw fa-table"></i>
-            <span class="text-light">Deudores</span></a>
+            <span class="text-light">Abonados en mora</span></a>
     </li>
     
 </ul>

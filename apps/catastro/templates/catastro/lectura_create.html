@@ -193,6 +193,7 @@ Lecturas
                                             <table class="table table-bordered table-hover" style="width=100%" cellspacing="0">
                                                 <thead class="table-info">
                                                     <tr>
+                                                        <th class="text-muted">#</th>
                                                         <th class="text-muted">Lectura</th>
                                                         <th class="text-muted">Catastro</th>
                                                         <th class="text-muted">L. Ant.</th>
@@ -206,6 +207,7 @@ Lecturas
                                                 <tbody>
                                                     {%for det in detalle %}
                                                     <tr>
+                                                        <td>{{forloop.counter}}</td>
                                                         <td>{{det.lectura}}</td>
                                                         <td>{{det.catastro}}</td>
                                                         <td>{{det.lectura_anterior}}</td>
@@ -260,9 +262,12 @@ Lecturas
 
 <script>
     $(document).ready(function () {
+        
         $("#id_periodo").datetimepicker({
             format: 'Y-m-d',
-            timepicker: false
+            timepicker: false,
+            theme:'dark',
+            value:new Date(),
         });
     });
 </script>

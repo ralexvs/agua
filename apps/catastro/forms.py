@@ -2,6 +2,7 @@ from django import forms
 from .models import Medidor, Barrio, Abonado, Medidor, Catastro, TipoLectura, Lectura, LecturaDetalle, MultaDetalle
 from apps.parametro.models import Pago, Servicio, Descuento, Multa
 
+
 class MedidorForm(forms.ModelForm):
     
     class Meta:

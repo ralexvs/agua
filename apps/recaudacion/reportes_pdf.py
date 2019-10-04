@@ -71,6 +71,7 @@ def planilla_recaudada(request,pk):
   p.drawString(450, 770, 'Medidor:')
   p.drawString(50, 760, "Abonado:")
   p.drawString(240, 760, "Dirección:")
+  p.drawString(450, 760, "Catastro:")
 
 # Obtenemos el titulo de un libro y la portada.
   p.setFont('Courier', 8)
@@ -84,7 +85,7 @@ def planilla_recaudada(request,pk):
     p.drawString(490, 780, str(recaudacion.abonado.celular))
   
   p.drawString(130, 770, str(recaudacion.abonado.identificacion))
-  p.drawString(100, 760, str(recaudacion.abonado))
+  p.drawString(90, 760, str(recaudacion.abonado))
   p.drawString(300, 760, str(recaudacion.abonado.direccion))
   p.drawString(290, 770, str(recaudacion.total_consumo))
   
@@ -115,6 +116,7 @@ def planilla_recaudada(request,pk):
     p.drawString(150, i-j, str(dt.lectura_detalle.lectura))
     servicio = str(dt.lectura_detalle.catastro.servicio)
     medidor = str(dt.lectura_detalle.catastro.medidor)
+    catastro = str(dt.lectura_detalle.catastro.numero)
     p.drawString(210, i-j, str(dt.lectura_detalle.tipo_lectura))
     p.drawString(260, i-j, str(dt.lectura_anterior))
     p.drawString(300, i-j, str(dt.lectura_actual))
@@ -156,6 +158,7 @@ def planilla_recaudada(request,pk):
   p.setFont('Courier', 7)
   p.drawString(390, 770, str(servicio))
   p.drawString(495, 770, str(medidor))
+  p.drawString(495, 760, str(catastro))
 
   p.drawString(350, l, "Agua Potable: ")
   p.drawString(350, l-10, "Derecho conexion: ")

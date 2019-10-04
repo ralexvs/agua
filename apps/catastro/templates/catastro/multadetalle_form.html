@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+
+    
+<div class="modal-dialog modal-xl">
+    <div class="modal-content">
+        <form method="POST" id="frmMulta" role="form" class="form-inline">{% csrf_token %}
+            <div class="col-xl-12 col-md-12 mb-12">
+                <div class="card shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-muted text-uppercase mb-1">
+                                    <!--{% if encabezado %}Editar{% else %}Nueva{% endif %} Lectura -->
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <div class="row">
+                                   
+                                    <!--Inicio encabezado-->
+                                    <div class="col-12">
+                                        <!--Inicio lista catastro-->
+                                        <!-- DataTables Example -->
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <div class="card-header">
+                                                    <!--Inicio encabezado-->
+                                                    <div class="input-group">
+                                                        <input class="form-control-plaintext input-group-append" type="text" name="abonado" id="id_abonado" readonly value="{{lectura.catastro.abonado}}">
+                                                        <label class="col-form-label-sm text-muted">TOTAL GENERAL</label>
+                                                        <input class="form-control-plaintext input-group-append" type="text" name="total_general" id="id_total_general" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="display" id="" style="width=100%"
+                                                        cellspacing="0">
+                                                        <thead class="bg-info">
+                                                            <tr>
+                                                                <th class="text-light ">#</th>
+                                                                <th class="text-light">Multa y otros valores</th>
+                                                                <th class="text-light">Valor</th>
+                                                                <th class="text-light">Acción</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {%for mt in multa %}
+                                                            <tr>
+                                                                <td>{{mt.id}}</td>
+                                                                <td>{{mt.descripcion}}</td>
+                                                                <td>{{mt.valor}}</td>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-warning btn-circle"><i
+                                                                            class="far fa-hand-pointer"
+                                                                            onclick="selectMulta({{mt.id}},'{{mt.descripcion}}',{{mt.valor}})"></i></button>
+                                                                </td>
+                                                            </tr>
+                                                            {% endfor%}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="row">
+        
+                                                    <div class="col-sm-1">
+                                                        <input type="text" readonly name="lectura" id="id_lectura"
+                                                            class="form-control-plaintext text-success" value="{{abonado.id}}" required>
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <input type="text" readonly name="multa" id="id_multa"
+                                                            class="form-control-plaintext text-success" value="" required>
+                                                    </div>
+                                                    <div class="col-sm-7">
+                                                        <input type="text" readonly name="multa_des" id="id_multa_des" class="form-control-plaintext text-success" value=""
+                                                            required>
+                                                    </div>
+                                                                                                        
+                                                    <div
+                                                        class=" col-sm-3 p-0 text-xs font-weight-bold text-warning text-uppercase">
+                                                        <span class="alert-warning">Multa y otros valores</span> </div>
+        
+                                                </div>
+                                                <div class=" row ">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">Cantidad</span>
+                                                        </div>
+                                                        <input type="number" name="cantidad" style="width: 12%"
+                                                            id="id_cantidad" value="0"  required>
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">Valor</span>
+                                                        </div>
+                                                        <input type="number" name="valor" id="id_valor"
+                                                            value="0" readonly required>
+                                                        <div class="input-group-prepend">
+                                                            <span for="id_consumo" class='input-group-text'>Total</span>
+                                                        </div>
+                                                        <input class='form-control-plaintext col-sm-2 bg-warning text-primary'
+                                                            type="text" name="total" id="id_total" value="0" readonly>
+                
+                                                        <div class="col-sm-1">
+                                                            <button type="button" onclick="borrar_detalle()"
+                                                                class="btn btn-sm col-sm-2"><i
+                                                                    class="fa fa-minus-circle text-dange"
+                                                                    aria-hidden="true"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--Opciones-->
+                                                <div class="dropdown-divider"></div>
+                                                <div class="row">
+        
+        
+                                                    <!--Botones-->
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <button type="submit" class="btn btn-success btn-block"><span
+                                                                        class="fa fa-save"></span> Agregar Multa</button>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <button onclick="cerrar_modal()"
+                                                                    class="btn btn-secondary btn-block"><i
+                                                                        class="far fa-hand-point-left"></i> Cancelar</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--Fin botones-->
+                                            </div>
+                                        </div>
+                                        <!-- DataTables Example -->
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class=" display" id="" style="width=100%"
+                                                        cellspacing="0">
+                                                        <thead class="table-info">
+                                                            <tr>
+                                                                <th class="text-muted">#</th>
+                                                                <th class="text-muted">Multa y otros valores</th>
+                                                                <th class="text-muted">Cantidad</th>
+                                                                <th class="text-muted">Valor</th>
+                                                                <th class="text-muted">Total</th>
+                                                                <th class="text-muted">Acciones</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {%for multad in detalle %}
+                                                            <tr>
+                                                                <td>{{forloop.counter}}</td>
+                                                                <td>{{multad.multa.descripcion}}</td>
+                                                                <td class="text-center">{{multad.cantidad}}</td>
+                                                                <td class="text-right">{{multad.valor}}</td>
+                                                                <td class="text-right">{{multad.total}}</td>
+                                                                
+                                                                <td>
+                                                                    <button
+                                                                        
+                                                                        class="btn btn-success btn-circle" role="button"><abbr
+                                                                            title="Multas"><i
+                                                                                class="fas fa-fire-alt"></i></abbr></button>
+        
+                                                                    <a href="{{request.META.HTTP_REFERER}}"><button
+                                                                        
+                                                                        class="btn btn-danger btn-circle" role="button"><abbr
+                                                                            title="Quitar"><i
+                                                                                class="fas fa-trash-alt fa-xs"></i></abbr></button>
+                                                                                </a>
+        
+                                                                </td>
+                                                            </tr>
+                                                            {% endfor%}
+                                                        </tbody>
+                                                    </table>
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--Fin lista catastro-->
+                                </div>
+                                <!--Fin fila lectura y catastro-->
+                                <div class="row">
+                                    <!--inicio detalle lectura-->
+                                    <div class="col">
+        
+        
+                                    </div>
+        
+                                </div>
+                                <!--fin detalle lectura-->
+        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+    </div>
+</div>
+{% endblock content %}
+{% block js_pages %}
+<script>
+    $(document).ready(function () {
+        $("#sidebarToggle").click();
+        $('table.display').DataTable({
+            "pageLength": 4,
+            "pagingType": "full_numbers",
+            language: {
+
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "<i class= 'fas fa-angle-double-left'></i>",
+                    "sLast": "<i class= 'fas fa-angle-double-right'></i>",
+                    "sNext": "<i class= 'fas fa-angle-right'></i>",
+                    "sPrevious": "<i class= 'fas fa-angle-left'></i>",
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+            
+        });
+
+        $('#id_cantidad').change(function () {
+            calcular();
+        });
+
+        /* Validar envío de Detalle*/
+        $('#frmMulta').submit(function (e) {
+            if (parseInt($('#id_cantidad').val()) <= 0 ) {
+                e.preventDefault();
+                $.alert({
+                    type: 'red',
+                    title: '',
+                    content: 'Cantidad no puede ser CERO',
+                });
+            }
+        });
+    });
+
+    function selectMulta(id, multa_des, valor) {
+        borrar_detalle();
+        $('#id_multa').val(+id);
+        $('#id_multa_des').val(multa_des);
+        $('#id_valor').val(+valor);
+        
+        $('#id_cantidad').focus();
+        $('#id_cantidad').select();
+        $('table.display').DataTable().search('').draw();
+    }
+
+    function calcular() {
+
+        let cantidad,valor,total;
+        cantidad = $('#id_cantidad').val();
+        valor = $('#id_valor').val();
+        cantidad = cantidad === "" ? 0 : +cantidad;
+        cantidad = cantidad < 0 ? 0 : +cantidad;
+
+        if (cantidad > 0) {
+            total = cantidad * valor;
+            $('#id_total').val(total);
+        } else {
+            $('#id_total').val(0);
+        }
+    }
+
+    function borrar_detalle() {
+        $('#id_cantidad').val(0);
+        $('#id_valor').val(0);
+        $('#id_total').val(0);
+    }
+
+
+</script>
+{% endblock js_pages %}
+
+{% block varios %}
+
+{% endblock varios %}

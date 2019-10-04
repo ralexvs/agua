@@ -4,7 +4,7 @@ from .views import (
     BarrioList, BarrioCreate, BarrioUpdate, BarrioDelete, barrio_inactivar,
     AbonadoList, AbonadoCreate, AbonadoUpdate, AbonadoDelete, abonado_inactivar, abonado_inactivar_js, search,
     CatastroList, CatastroCreate, CatastroUpdate, CatastroDelete, catastro_inactivar, catastro_suspender_servicio, CatastroSuspendido,
-    TomaLecturaList,
+    toma_lectura_list,
     TipoLecturaList, TipoLecturaCreate, TipoLecturaUpdate, TipoLecturaDelete, tipolectura_inactivar,
     LecturaList,  LecturaDelete, lectura_inactivar, lectura, 
     LecturaDetalleList, LecturaDetalleDelete,
@@ -49,7 +49,7 @@ urlpatterns = [
           catastro_suspender_servicio, name='catastro_suspender_servicio'),
 
     path('catastros/suspendidos/', CatastroSuspendido.as_view(),name='catastro_suspendido'),
-    path('catastros/toma_lecturas/', TomaLecturaList.as_view(),name='toma_lecturas'),
+    path('catastros/toma_lecturas/', toma_lectura_list, name='toma_lecturas'),
 
 
      path('tipolecturas/', TipoLecturaList.as_view(), name='tipolectura_list'),

@@ -4,6 +4,7 @@ from apps.parametro.models import Tarifa, Multa, Pago
 from django.views.generic.list import ListView
 from django.views.generic.edit import DeleteView
 from apps.core.views import SinPrivilegios, VistaBaseCreate, VistaBaseUpdate
+from apps.parametro.models import Entidad
 from django.urls import reverse_lazy
 from .forms import MedidorForm, BarrioForm, AbonadoForm, CatastroForm, TipoLecturaForm, LecturaForm, MultaDetalleForm
 from django.contrib.auth.decorators import login_required, permission_required
@@ -218,17 +219,14 @@ class CatastroList(SinPrivilegios, ListView):
     permission_required = 'catastro.view_catastro'
     model = Catastro
 
-class TomaLecturaList(SinPrivilegios, ListView):
-    permission_required = 'catastro.view_catastro'
+def toma_lectura_list(request):
+    
     template_name = 'catastro/toma_lecturas.html'
-    model = Catastro
     queryset = Catastro.objects.filter(suspender=False).order_by('abonado__apellidos')
-
-    def get_context_data(self, **kwargs):
-        context = super(TomaLecturaList, self).get_context_data(**kwargs)
-        # context.update({'ahora':self.ahora}) #tambien funciona
-        context['today'] = timezone.now()
-        return context
+    entidad = Entidad.objects.all().first()
+    today = timezone.now().strftime("%b/%Y")
+ 
+    return render (request, template_name, {'catastro':queryset, 'entidad':entidad, 'today':today})
 
 
 

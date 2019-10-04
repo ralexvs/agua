@@ -17,11 +17,35 @@ from django.utils import  timezone
 
 # Create your views here.
 
-def informe_caja(request):
+def informe_caja_global(request):
     today = timezone.now()
     fecha_inicial = request.GET.get('fecha_inicial')
     fecha_final = request.GET.get('fecha_final')
-    template_name = 'recaudacion/informe_caja.html'
+    template_name = 'recaudacion/informe_caja_global.html'
+    entidad = Entidad.objects.all().first()
+    results = Recaudacion.objects.filter(fecha__range=(fecha_inicial, fecha_final)).distinct()
+    subtotal = Recaudacion.objects.filter(fecha__range=(fecha_inicial, fecha_final)).distinct().aggregate(Sum('subtotal'))
+    total_descuento = Recaudacion.objects.filter(fecha__range=(fecha_inicial, fecha_final)).distinct().aggregate(
+        Sum('total_descuento'))
+    total_general = Recaudacion.objects.filter(fecha__range=(fecha_inicial, fecha_final)).distinct().aggregate(
+        Sum('total_general'))
+    return render(request, 
+        template_name,
+                  {'results': results,
+                   'today': today,
+                   'fecha_inicial':fecha_inicial,
+                   'fecha_final':fecha_final,
+                   'subtotal':subtotal,
+                   'total_descuento': total_descuento,
+                   'total_general':total_general,
+                   'entidad':entidad,
+                   })
+
+def informe_caja_individual(request):
+    today = timezone.now()
+    fecha_inicial = request.GET.get('fecha_inicial')
+    fecha_final = request.GET.get('fecha_final')
+    template_name = 'recaudacion/informe_caja_individual.html'
     entidad = Entidad.objects.all().first()
     results = Recaudacion.objects.filter(fecha__range=(fecha_inicial, fecha_final)).distinct()
     subtotal = Recaudacion.objects.filter(fecha__range=(fecha_inicial, fecha_final)).distinct().aggregate(Sum('subtotal'))
@@ -38,7 +62,6 @@ def informe_caja(request):
                    'total_descuento': total_descuento,
                    'total_general':total_general,
                    'entidad':entidad,
-
                    })
 
 
