@@ -194,6 +194,7 @@ Lecturas
                                                 <thead class="table-info">
                                                     <tr>
                                                         <th class="text-muted">#</th>
+                                                        <!--<th class="text-muted">id</th>-->
                                                         <th class="text-muted">Lectura</th>
                                                         <th class="text-muted">Catastro</th>
                                                         <th class="text-muted">L. Ant.</th>
@@ -208,6 +209,7 @@ Lecturas
                                                     {%for det in detalle %}
                                                     <tr>
                                                         <td>{{forloop.counter}}</td>
+                                                        <!--<td>{{det.id}}</td>-->
                                                         <td>{{det.lectura}}</td>
                                                         <td>{{det.catastro}}</td>
                                                         <td>{{det.lectura_anterior}}</td>
@@ -267,7 +269,7 @@ Lecturas
             format: 'Y-m-d',
             timepicker: false,
             theme:'dark',
-            value:new Date(),
+            
         });
     });
 </script>

@@ -530,7 +530,7 @@ def lectura(request, lectura_id=None):
                     excedente = tar.valor_excedente
                     rango_inicial = tar.rango_inicial
                     valor_consumo_maximo = 0
-                    metros_excedidos = int(consumo) - rango_inicial
+                    metros_excedidos = int(consumo) - int(catas.servicio.base_consumo)
                     valor_excedente = metros_excedidos * excedente
                      
                 elif int(consumo) > catas.servicio.consumo_maximo:
@@ -540,7 +540,7 @@ def lectura(request, lectura_id=None):
                     excedente = tarif.valor_excedente
                     rango_inicial = tarif.rango_inicial
                     valor_consumo_maximo = catas.servicio.valor_consumo_maximo
-                    metros_excedidos = int(consumo) - rango_inicial
+                    metros_excedidos = int(consumo) - int(catas.servicio.base_consumo)
                     valor_excedente = metros_excedidos * excedente
 
         else:
