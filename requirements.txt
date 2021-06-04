@@ -1,4 +1,4 @@
-Django==2.2.3
+Django==2.2.21
 django-chartjs==1.5.0
 django-import-export==1.2.0
 mysqlclient==1.4.2.post1
